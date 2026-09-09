@@ -27,6 +27,11 @@ namespace ReimbursementDocApp
             get { return Path.Combine(UserRoot, "Data"); }
         }
 
+        public static string ModuleDataRoot(DocumentModule module)
+        {
+            return Path.Combine(DataRoot, module == DocumentModule.Payroll ? "Payroll" : "Procurement");
+        }
+
         public static string TemplateRoot(DocumentModule module)
         {
             return Path.Combine(UserRoot, "Template", module == DocumentModule.Payroll ? "Payroll" : "Procurement");
@@ -73,6 +78,11 @@ namespace ReimbursementDocApp
         public static string SavedTemplatesPath
         {
             get { return Path.Combine(DataRoot, "saved_templates.json"); }
+        }
+
+        public static string SavedTemplatesPathFor(DocumentModule module)
+        {
+            return Path.Combine(ModuleDataRoot(module), "saved_templates.json");
         }
 
         public static string PreferencesPath
@@ -332,20 +342,37 @@ namespace ReimbursementDocApp
     {
         private readonly JavaScriptSerializer serializer = new JavaScriptSerializer { MaxJsonLength = int.MaxValue };
         private readonly string dataRoot;
+        private readonly string legacyDataRoot;
 
         public Document346Store()
-            : this(Document346Paths.DataRoot)
+            : this(Document346Paths.DataRoot, "")
         {
         }
 
         internal Document346Store(string testDataRoot)
+            : this(testDataRoot, "")
         {
-            dataRoot = string.IsNullOrWhiteSpace(testDataRoot) ? Document346Paths.DataRoot : testDataRoot;
+        }
+
+        internal Document346Store(DocumentModule module)
+            : this(Document346Paths.ModuleDataRoot(module), Document346Paths.DataRoot)
+        {
+        }
+
+        private Document346Store(string root, string legacyRoot)
+        {
+            dataRoot = string.IsNullOrWhiteSpace(root) ? Document346Paths.DataRoot : root;
+            legacyDataRoot = legacyRoot ?? "";
         }
 
         public Document346StoreData Load()
         {
             var path = Path.Combine(dataRoot, "saved_templates.json");
+            if (!File.Exists(path) && !string.IsNullOrWhiteSpace(legacyDataRoot))
+            {
+                var legacyPath = Path.Combine(legacyDataRoot, "saved_templates.json");
+                if (File.Exists(legacyPath)) path = legacyPath;
+            }
             if (!File.Exists(path)) return new Document346StoreData();
 
             try

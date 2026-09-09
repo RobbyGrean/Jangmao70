@@ -32,7 +32,7 @@ namespace ReimbursementDocApp
 
         private readonly WorkingRecord record;
         private readonly Action sharedChanged;
-        private readonly Document346Store store = new Document346Store();
+        private readonly Document346Store store = new Document346Store(DocumentModule.Procurement);
         private readonly ErrorProvider errorProvider = new ErrorProvider();
         private readonly Dictionary<string, Control> fields = new Dictionary<string, Control>();
         private readonly Dictionary<string, ComboBox> dateCombos = new Dictionary<string, ComboBox>();
@@ -359,15 +359,20 @@ namespace ReimbursementDocApp
             AddText(parent, "ตำบล", "employee.subdistrict", 434, 900, 170);
             AddText(parent, "อำเภอ", "employee.district", 24, 980, 200);
             AddText(parent, "จังหวัด", "employee.province", 244, 980, 200);
-            AddText(parent, "ออกอำเภอ", "employee.idIssueDistrict", 464, 980, 250);
-            AddText(parent, "ออกจังหวัด", "employee.idIssueProvince", 24, 1060, 220);
-            AddDateField(parent, "วันออกบัตร", "employee.idIssue.day", "employee.idIssue.dayCustom", 264, 1060);
-            AddDateField(parent, "เดือนออกบัตร", "employee.idIssue.month", "employee.idIssue.monthCustom", 484, 1060);
-            AddText(parent, "ปีออกบัตร", "employee.idIssue.year", 24, 1140, 150);
-            AddDateField(parent, "วันบัตรหมดอายุ", "employee.idExpiry.day", "employee.idExpiry.dayCustom", 194, 1140);
-            AddDateField(parent, "เดือนบัตรหมดอายุ", "employee.idExpiry.month", "employee.idExpiry.monthCustom", 414, 1140);
-            AddText(parent, "ปีบัตรหมดอายุ", "employee.idExpiry.year", 24, 1220, 150);
-            parent.AutoScrollMinSize = new Size(0, 1380);
+            AddZoneHeading(parent, "สถานที่ออกบัตร", 1060);
+            AddText(parent, "ออกอำเภอ", "employee.idIssueDistrict", 24, 1098, 250);
+            AddText(parent, "ออกจังหวัด", "employee.idIssueProvince", 294, 1098, 250);
+
+            AddZoneHeading(parent, "วันออกบัตร", 1180);
+            AddDateField(parent, "วัน", "employee.idIssue.day", "employee.idIssue.dayCustom", 24, 1218);
+            AddDateField(parent, "เดือน", "employee.idIssue.month", "employee.idIssue.monthCustom", 244, 1218);
+            AddText(parent, "ปี", "employee.idIssue.year", 464, 1218, 150);
+
+            AddZoneHeading(parent, "วันหมดอายุบัตร", 1300);
+            AddDateField(parent, "วัน", "employee.idExpiry.day", "employee.idExpiry.dayCustom", 24, 1338);
+            AddDateField(parent, "เดือน", "employee.idExpiry.month", "employee.idExpiry.monthCustom", 244, 1338);
+            AddText(parent, "ปี", "employee.idExpiry.year", 464, 1338, 150);
+            parent.AutoScrollMinSize = new Size(0, 1480);
         }
 
         private void BuildSummarySection(Panel parent)

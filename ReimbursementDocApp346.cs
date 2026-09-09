@@ -705,6 +705,11 @@ namespace ReimbursementDocApp
 
             private string GetSavedTemplatesPath()
             {
+                return Document346Paths.SavedTemplatesPathFor(DocumentModule.Payroll);
+            }
+
+            private string GetLegacySavedTemplatesPath()
+            {
                 return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, SavedTemplatesFileName);
             }
 
@@ -712,6 +717,7 @@ namespace ReimbursementDocApp
             {
                 savedTemplates.Clear();
                 var path = GetSavedTemplatesPath();
+                if (!File.Exists(path)) path = GetLegacySavedTemplatesPath();
                 if (!File.Exists(path)) return;
                 var json = File.ReadAllText(path, Encoding.UTF8);
                 foreach (Match templateMatch in Regex.Matches(json, "\\{\\s*\"id\"\\s*:\\s*\"([^\"]*)\"(.*?)\"data\"\\s*:\\s*\\{(.*?)\\}\\s*\\}", RegexOptions.Singleline))
@@ -739,6 +745,7 @@ namespace ReimbursementDocApp
             private void SaveSavedTemplates()
             {
                 var path = GetSavedTemplatesPath();
+                Directory.CreateDirectory(Path.GetDirectoryName(path));
                 var builder = new StringBuilder();
                 builder.AppendLine("{");
                 builder.AppendLine("  \"version\": 1,");
