@@ -1,0 +1,8 @@
+todolist
+
+# Generated test binaries and temporary output
+dist/*SmokeTest.exe
+dist/Document346SmokeTest.exe
+dist/output/
+release/Jangmao70-Installer/
+*.tmp
