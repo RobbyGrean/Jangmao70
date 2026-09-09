@@ -72,7 +72,7 @@ XML Payroll ไฟล์ 5 มี โรงเรียน{ชื่อโรง
 
 Source GenerateDocuments :1266–1269 normalize และเขียนกลับ control ก่อนตรวจ required; NormalizeSchoolName("") คืนคำว่า โรงเรียน ทำให้ช่องว่างอาจผ่าน required ต้อง validate ข้อมูลผู้ใช้ที่มีความหมายก่อนเติม prefix และอย่าให้ snapshot normalization แก้ UI โดยไม่ตั้งใจ
 
-NormalizeDistrictName :1510–1530 บังคับ branch ประถมศึกษา จึงทำให้ชื่อเต็มประเภทมัธยมศึกษาผิด ต้องแยกประเภทกับ suffix และทดสอบทุก default ทั้ง 3 รายการ, prefix ซ้ำ, ช่องว่าง และ normalize ซ้ำ ค่า default ลำดับที่ 2 ต้องสะกดประจวบคีรีขันธ์ตาม D03; อย่าอนุมานว่าลำดับที่ 2 ต้องถูกเลือกอัตโนมัติแทนลำดับแรก
+NormalizeDistrictName :1510–1530 บังคับ branch ประถมศึกษา จึงทำให้ชื่อเต็มประเภทมัธยมศึกษาผิด ต้องแยกประเภทกับ suffix และทดสอบค่า default แม่ฮ่องสอน เขต 2, ค่า custom ทั้งประเภทประถมศึกษา/มัธยมศึกษา, prefix ซ้ำ, ช่องว่าง และ normalize ซ้ำ; ผู้ใช้เปลี่ยน requirement หลัง review ให้เหลือ default เพียงแม่ฮ่องสอน เขต 2 และพิมพ์ชื่อเขตอื่นเองได้
 
 ### R05 Renderer รองรับ split runs แต่ยังไม่ได้พิสูจน์ formatting — สูง
 

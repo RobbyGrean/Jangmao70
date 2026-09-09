@@ -294,7 +294,8 @@ namespace ReimbursementDocApp
             AddHeading(parent, "ข้อมูลโรงเรียนและผู้ลงนามของ record นี้", "ชื่อโรงเรียนและบุคลากรจะไม่กลายเป็นค่า global ของลูกจ้างคนอื่น");
             AddText(parent, "ชื่อโรงเรียน *", "school.name", 24, 82, 620);
             districtBox = AddEditableCombo(parent, "เขตพื้นที่การศึกษา *", "school.district", 24, 150, 620);
-            districtBox.Items.AddRange(new object[] { "สำนักงานเขตพื้นที่การศึกษาประถมศึกษาแม่ฮ่องสอน เขต 2", "สำนักงานเขตพื้นที่การศึกษาประถมศึกษาประจวบคีรีขันธ์ เขต 2", "สำนักงานเขตพื้นที่การศึกษามัธยมศึกษากาญจนบุรี" });
+            districtBox.Items.Add(DefaultDistrict);
+            districtBox.SelectedIndex = 0;
             AddPersonFields(parent, "ผู้อำนวยการโรงเรียน", "school.director", 224);
             AddPersonFields(parent, "เจ้าหน้าที่พัสดุ", "school.supply", 344);
             AddPersonFields(parent, "หัวหน้าเจ้าหน้าที่พัสดุ", "school.headSupply", 464);

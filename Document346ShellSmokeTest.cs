@@ -29,6 +29,8 @@ namespace ReimbursementDocApp
                     if (sectionList.Items[1].ToString() != "2  กรรมการ TOR" || sectionList.Items[2].ToString() != "3  ข้อมูลลูกจ้าง" || sectionList.Items[3].ToString() != "4  สรุปชุดเอกสารที่ต้องการสร้าง") throw new InvalidOperationException("Procurement zone labels do not match the current UX decision.");
                     var procurementFields = GetField<Dictionary<string, Control>>(procurement, "fields");
                     if (procurementFields == null || !procurementFields.ContainsKey("procurement.specificationOrder")) throw new InvalidOperationException("TOR appointment order field is missing from the Procurement form.");
+                    var districtBox = GetField<ComboBox>(procurement, "districtBox");
+                    if (districtBox == null || districtBox.DropDownStyle != ComboBoxStyle.DropDown || districtBox.Items.Count != 1 || districtBox.Items[0].ToString() != "สำนักงานเขตพื้นที่การศึกษาประถมศึกษาแม่ฮ่องสอน เขต 2") throw new InvalidOperationException("Procurement must keep only the Mae Hong Son District 2 preset while allowing users to type another district.");
                     var sectionPanels = GetField<List<Panel>>(procurement, "sectionPanels");
                     var committeePanel = sectionPanels == null || sectionPanels.Count < 2 ? null : sectionPanels[1];
                     var committeeGroups = committeePanel == null ? new Panel[0] : committeePanel.Controls.OfType<Panel>().Where(x => x.Width == 700 && x.Height == 154).ToArray();
