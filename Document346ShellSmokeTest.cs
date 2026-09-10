@@ -55,6 +55,14 @@ namespace ReimbursementDocApp
                     if (secondSchoolRow == null || secondSchoolBox == null || secondSchoolBox.Parent != secondSchoolRow || secondSchoolRow.Bottom >= educationLevel.Top) throw new InvalidOperationException("The second-school field must stay in its own row above the education zone.");
                     var procurementPositionBox = GetField<ComboBox>(procurement, "positionBox");
                     if (procurementPositionBox == null || procurementPositionBox.Items[0].ToString() != "-- เลือกตำแหน่ง --" || dateCombos == null || dateCombos["employee.birth.month"].Items[0].ToString() != "-- ไม่ระบุ --" || procurementFields["employee.prefix"].Text != "-- ไม่ระบุ --") throw new InvalidOperationException("Optional dropdowns must explain their empty state instead of showing a blank row. Actual position='" + (procurementPositionBox == null ? "<missing>" : procurementPositionBox.Text) + "', month='" + (dateCombos == null ? "<missing>" : dateCombos["employee.birth.month"].Items[0].ToString()) + "', prefix='" + (procurementFields == null ? "<missing>" : procurementFields["employee.prefix"].Text) + "'.");
+                    procurementPositionBox.SelectedIndex = 1;
+                    Invoke(procurement, "UpdateRouteControls");
+                    var documentChecks = GetField<List<CheckBox>>(procurement, "documentChecks");
+                    var documentOrder = documentChecks == null ? new string[0] : documentChecks.Select(x => x.Text).ToArray();
+                    var expectedDocumentOrder = new[] { "1.ขอจ้างต่อเนื่อง 630.docx", "2.1 ขอตั้งกกTOR.docx", "2.2 คำสั่งTOR.docx", "3.1.1 TORธุรการ9000.docx", "4.รายงานผล TOR.docx", "5. รายงานขอจ้าง.docx", "6.1.1 ธุรการ9000.docx", "7. รายงานผลพิจารณา.docx", "8. ประกาศผู้ชนะ.docx", "9. ใบสั่งจ้าง.docx" };
+                    if (documentChecks == null || !documentOrder.SequenceEqual(expectedDocumentOrder)) throw new InvalidOperationException("Procurement document checklist must follow numeric document order, including 3 and 6 between 2 and 4/5 and before 7.");
+                    procurementPositionBox.SelectedIndex = 0;
+                    Invoke(procurement, "UpdateRouteControls");
                     dateCombos["employee.birth.month"].SelectedIndex = 0;
                     Invoke(procurement, "CaptureFromControls");
                     if (procurement.Record.Employee.BirthMonth != "" || procurement.Record.Procurement.PositionId != "") throw new InvalidOperationException("Dropdown helper labels must remain empty in the saved record.");

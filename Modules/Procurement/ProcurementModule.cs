@@ -790,8 +790,12 @@ namespace ReimbursementDocApp
             if (manifest.centralDocuments != null) paths.AddRange(manifest.centralDocuments.Select(x => x.relativePath));
             if (route != null) paths.Add(route.tor);
             if (route != null) paths.Add(route.quote);
+            paths = paths.Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(GetDocumentSortKey)
+                .ThenBy(x => x, StringComparer.OrdinalIgnoreCase)
+                .ToList();
             var y = 46;
-            foreach (var path in paths.Distinct(StringComparer.Ordinal))
+            foreach (var path in paths)
             {
                 var check = new CheckBox { Text = Path.GetFileName(path), Tag = path, Checked = true, Location = new Point(14, y), Size = new Size(620, 24) };
                 check.CheckedChanged += delegate { OnUiChanged(); };
@@ -800,6 +804,15 @@ namespace ReimbursementDocApp
                 y += 28;
             }
             if (paths.Count == 0) documentPanel.Controls.Add(new Label { Text = "เลือกตำแหน่งเพื่อแสดงชุดเอกสาร", Location = new Point(14, y), Size = new Size(400, 24) });
+        }
+
+        private static string GetDocumentSortKey(string path)
+        {
+            var fileName = Path.GetFileName(path ?? "");
+            var match = Regex.Match(fileName, "^\\s*(\\d+(?:\\.\\d+)*)");
+            if (!match.Success) return "99999999";
+            var parts = match.Groups[1].Value.Split('.');
+            return string.Join(".", parts.Select(x => int.Parse(x).ToString("D8")).ToArray());
         }
 
         private List<string> ValidateRecord(WorkingRecord candidate)
