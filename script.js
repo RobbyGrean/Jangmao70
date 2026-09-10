@@ -73,24 +73,10 @@ if (SITE_CONFIG.steps.length) {
 const guideReady = Boolean(SITE_CONFIG.guideUrl || SITE_CONFIG.guidePdfUrl);
 document.querySelector('#guide-status').textContent = guideReady ? 'คู่มือออนไลน์พร้อมใช้งาน' : 'กำลังจัดเตรียมคู่มือ';
 document.querySelector('#guide-note').textContent = SITE_CONFIG.guideUrl && SITE_CONFIG.guidePdfUrl ? 'อ่านออนไลน์หรือเก็บไฟล์ PDF ไว้อ่านภายหลัง' : guideReady ? 'อ่านคู่มือฉบับเต็มได้จากหน้า Guide' : 'คู่มือกำลังจัดเตรียม';
-if (SITE_CONFIG.screenshot) {
-  const img = new Image(); img.alt = SITE_CONFIG.screenshot.alt;
-  img.onload = () => { document.querySelector('#screenshot').replaceChildren(img); document.querySelector('figcaption').textContent = SITE_CONFIG.screenshot.alt; };
-  img.src = SITE_CONFIG.screenshot.src;
-}
 
-// One bounded depth movement for gallery groups; all content is visible by default.
+
 const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
 const finePointer = matchMedia('(hover: hover) and (pointer: fine)');
-const depthObserver = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      if (!motionPreference.matches && finePointer.matches) entry.target.classList.add('depth-arrive');
-      depthObserver.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.08 });
-document.querySelectorAll('.screenshot-group').forEach(group => depthObserver.observe(group));
 const downloadObserver = new IntersectionObserver(entries => entries.forEach(entry => entry.target.classList.toggle('motion-paused', !entry.isIntersecting)));
 document.querySelectorAll('.primary').forEach(button => downloadObserver.observe(button));
 const stage = document.querySelector('.preview-stage');

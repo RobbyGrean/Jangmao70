@@ -60,6 +60,35 @@
 
 <img src="./assets/readme/divider.svg" width="100%" alt="">
 
+## ดาวน์โหลดหรือติดตั้งแล้วเจอคำเตือน
+
+### Chrome เตือนไฟล์มีความเสี่ยง
+
+1. เปิดรายการดาวน์โหลด แล้วคลิกลูกศรหรือรายการไฟล์ที่มีคำเตือน
+2. ตรวจแหล่งที่มาเป็น **RobbyGrean/Jangmao70** และชื่อไฟล์ **Jangmao70-Installer.zip**
+3. เมื่อตรวจสอบและเชื่อถือแล้ว คลิก **ดาวน์โหลดไฟล์ที่น่าสงสัย** (บางรุ่นใช้ **Keep / เก็บไว้** หรือ **Keep anyway / เก็บไว้ต่อไป**)
+4. แตก ZIP ก่อนเปิด **Jangmao70-Setup.exe**
+
+| เปิดรายการที่ถูกเตือน | เลือกดาวน์โหลดต่อ |
+| :---: | :---: |
+| ![รายการดาวน์โหลด Chrome](./assets/guide/chrome-warning-history.png) | ![ปุ่มดาวน์โหลดไฟล์ที่น่าสงสัย](./assets/guide/chrome-warning-detail.png) |
+
+ภาพ Chrome มาจาก jmoney รุ่นก่อน ชื่อไฟล์ในภาพจึงต่างกัน สำหรับโปรแกรมนี้ให้ตรวจชื่อ **Jangmao70-Installer.zip**
+
+### Windows protected your PC — More info → Run anyway
+
+1. เมื่อขึ้น **Windows protected your PC** คลิก **More info / ข้อมูลเพิ่มเติม**
+2. ตรวจชื่อแอปให้เป็น **Jangmao70-Setup.exe** จากไฟล์ที่ดาวน์โหลดจากเว็บไซต์ทางการ
+3. คลิก **Run anyway / เรียกใช้ต่อไป** ที่ปรากฏขึ้น แล้วทำตามหน้าต่างติดตั้ง
+
+![ตัวอย่างสองขั้นตอนบน Windows: คลิก More info แล้วคลิก Run anyway ที่วงไว้](./assets/guide/windows-smartscreen.png)
+
+SmartScreen อาจเตือนเมื่อแอปยังไม่มีชื่อเสียงเพียงพอหรือไม่มีลายเซ็นที่ระบบรู้จัก ทำต่อเฉพาะไฟล์ที่ตรวจสอบและเชื่อถือ หากไม่มีปุ่ม Run anyway ให้ติดต่อผู้ดูแลเครื่อง เพราะนโยบายองค์กรอาจไม่อนุญาต
+
+[ดูภาพและขั้นตอนบนเว็บไซต์](https://robbygrean.github.io/Jangmao70/#download-help) · [อ่านคู่มือการติดตั้ง](https://robbygrean.github.io/Jangmao70/guide.html#smartscreen)
+
+<img src="./assets/readme/divider.svg" width="100%" alt="">
+
 ## ภาพโปรแกรมจริง
 
 ### จัดซื้อจัดจ้างและสัญญา
@@ -72,7 +101,7 @@
 
 [![หน้าต่างหลักของระบบเบิกเงินเดือน Jangmao70](./assets/screenshots/payroll-window.png)](./assets/screenshots/payroll-window.png)
 
-<p align="center"><a href="https://robbygrean.github.io/Jangmao70/#screenshots">ดูภาพหน้าจอทั้งหมดบนเว็บไซต์ →</a></p>
+<p align="center"><a href="https://robbygrean.github.io/Jangmao70/#screenshots">ดูสไลด์ภาพโปรแกรมบนเว็บไซต์ →</a></p>
 
 ## จากข้อมูลสู่เอกสาร Word
 
