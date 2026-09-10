@@ -1,54 +1,122 @@
 <div align="center">
 
-# Jangmao70
+<a href="https://robbygrean.github.io/Jangmao70/">
+  <img src="./assets/readme/jangmao70-hero.svg" alt="Jangmao70 — โปรแกรมสร้างเอกสาร Word แบบออฟไลน์ สำหรับงานจัดซื้อจัดจ้างและเบิกเงินเดือน" width="100%">
+</a>
 
-โปรแกรมช่วยกรอกข้อมูลและสร้างเอกสาร Word สำหรับงานจัดซื้อจัดจ้างและงานเบิกเงินเดือน
+<p>
+  <img src="https://img.shields.io/badge/WINDOWS-OFFLINE-36cfe4?style=for-the-badge&amp;labelColor=101d39" alt="Windows · Offline">
+  <img src="https://img.shields.io/badge/WORKFLOWS-2-b499ff?style=for-the-badge&amp;labelColor=101d39" alt="2 workflows">
+  <img src="https://img.shields.io/badge/OUTPUT-WORD-ef74bc?style=for-the-badge&amp;labelColor=101d39" alt="Word output">
+  <img src="https://img.shields.io/badge/LOCAL_DATA-NO_CLOUD-f2cd7d?style=for-the-badge&amp;labelColor=101d39" alt="Local data · No cloud">
+</p>
 
-[ดาวน์โหลดโปรแกรม](./assets/downloads/Jangmao70-Installer.zip) · [อ่านคู่มือ](./GUIDE.md) · [ดูคู่มือเว็บ](./guide.html)
+### งานเอกสารสองแบบ จบในโปรแกรมเดียว
+
+โปรแกรมช่วยกรอกข้อมูลและสร้างเอกสาร **Word** สำหรับ Windows<br>
+**จัดซื้อจัดจ้างและสัญญา · เบิกเงินเดือน**<br>
+กรอกหรือโหลดข้อมูล → ตรวจสอบ → สร้างเอกสาร พร้อมเก็บผลลัพธ์ไว้ในเครื่อง
+
+<a href="https://robbygrean.github.io/Jangmao70/">
+  <img src="./assets/readme/download-button.svg" alt="ดาวน์โหลดโปรแกรม Jangmao70 — ไปยังหน้าดาวน์โหลด" width="420">
+</a>
+
+**[เปิดเว็บไซต์และดาวน์โหลดโปรแกรม](https://robbygrean.github.io/Jangmao70/)**
+
+<p>
+  <a href="https://robbygrean.github.io/Jangmao70/guide.html"><img src="https://img.shields.io/badge/READ-THAI_GUIDE-78dfe9?style=for-the-badge&amp;labelColor=101d39" alt="อ่านคู่มือภาษาไทย"></a>
+  <a href="./assets/downloads/Jangmao70-Source.zip"><img src="https://img.shields.io/badge/EXPLORE-SOURCE_CODE-c1a0ff?style=for-the-badge&amp;labelColor=101d39" alt="ดาวน์โหลด Source code"></a>
+</p>
+
+[ความสามารถ](#ความสามารถ) · [เริ่มใช้งาน](#เริ่มใช้งาน) · [ภาพโปรแกรมจริง](#ภาพโปรแกรมจริง) · [ดาวน์โหลดและคู่มือ](#ดาวน์โหลดและคู่มือ)
 
 </div>
 
-Jangmao70 รวมงานเอกสารสองแบบไว้ในโปรแกรมเดียว แต่แยกขั้นตอน เอกสารที่สร้าง และโฟลเดอร์ผลลัพธ์ออกจากกัน
+<img src="./assets/readme/divider.svg" width="100%" alt="">
 
-## ดาวน์โหลด
+## ความสามารถ
 
-| ไฟล์ | เหมาะสำหรับ |
-| --- | --- |
-| [Jangmao70-Installer.zip](./assets/downloads/Jangmao70-Installer.zip) | ผู้ใช้งานทั่วไป ใช้ติดตั้งโปรแกรมบน Windows |
-| [Jangmao70-Source.zip](./assets/downloads/Jangmao70-Source.zip) | ผู้ที่ต้องการศึกษา source code และโครงสร้างโปรแกรม |
+| จัดซื้อจัดจ้างและสัญญา | เบิกเงินเดือน |
+| :--- | :--- |
+| กรอกข้อมูลสำหรับงานจัดซื้อจัดจ้างและสัญญา | กรอกข้อมูลสำหรับงานเบิกเงินเดือน |
+| ตรวจรายการเอกสารก่อนสร้างจากแม่แบบ Word | เลือกงวดและรายการเอกสารที่ต้องการสร้าง |
+| เก็บ Template ข้อมูลและผลลัพธ์ของงานจัดจ้างแยกไว้ | เก็บ Template ข้อมูลและผลลัพธ์ของงานเงินเดือนแยกไว้ |
 
-## เริ่มใช้งานอย่างย่อ
+**ใช้ข้อมูลร่วมได้** — ชื่อ ที่อยู่ และข้อมูลกรรมการที่เกี่ยวข้องสามารถนำไปใช้กับอีกแท็บผ่านการโหลด Template โดยตรวจรายงานก่อนยืนยันการนำเข้าข้ามงาน
 
-1. ดาวน์โหลด Installer แล้วแตก ZIP
-2. เปิด `Jangmao70-Setup.exe`
-3. เปิด Jangmao70 และเลือกแท็บงานที่ต้องการ
-4. กรอกหรือโหลด Template → ตรวจข้อมูล → สร้างเอกสาร Word
+**ทำงานในเครื่อง** — ข้อมูลและเอกสารทำงานแบบ local ไม่ต้องใช้ npm หรือระบบ cloud เพื่อใช้งานโปรแกรม
 
-รายละเอียดคำเตือนจาก Chrome/Windows และวิธีติดตั้งอยู่ใน [คู่มือการใช้งาน](./GUIDE.md) ส่วนเนื้อหาและข้อกำหนดสำหรับเว็บไซต์อยู่ใน [SITE_CONTENT_BRIEF.md](./SITE_CONTENT_BRIEF.md)
+**เก็บข้อมูลไว้ใช้ต่อ** — บันทึก Template เพื่อโหลดข้อมูลในฟอร์มกลับมาใช้ครั้งถัดไป โดยงวดเบิก รายการเอกสาร และ Output ยังคงแยกตามแท็บ
 
-## Workflow ของผู้ใช้
+## เริ่มใช้งาน
 
-![Workflow ของผู้ใช้ Jangmao70](./assets/readme/jangmao70-user-workflow.svg)
+1. ไปที่ **[หน้าดาวน์โหลด Jangmao70](https://robbygrean.github.io/Jangmao70/)** แล้วดาวน์โหลด Installer
+2. แตกไฟล์ ZIP และเปิด **`Jangmao70-Setup.exe`**
+3. เปิดโปรแกรม แล้วเลือกแท็บ **จัดซื้อจัดจ้างและสัญญา** หรือ **เบิกเงินเดือน**
+4. กรอกข้อมูลหรือโหลด Template ตรวจสอบข้อมูล แล้วสร้างเอกสาร Word
 
-## การเชื่อมโยงข้อมูลภายใน
+> [!TIP]
+> คู่มือรวมวิธีติดตั้ง คำเตือนจาก Chrome/Windows การโหลด Template ข้ามงาน และการสร้างเอกสารไว้แล้ว → **[อ่านคู่มือภาษาไทย](https://robbygrean.github.io/Jangmao70/guide.html)**
+
+<img src="./assets/readme/divider.svg" width="100%" alt="">
+
+## ภาพโปรแกรมจริง
+
+### จัดซื้อจัดจ้างและสัญญา
+
+| ข้อมูลโรงเรียน | ตรวจชุดเอกสาร |
+| :---: | :---: |
+| [![หน้าข้อมูลโรงเรียน](./assets/screenshots/procurement-school.png)](./assets/screenshots/procurement-school.png) | [![หน้าสรุปชุดเอกสารจัดซื้อจัดจ้าง](./assets/screenshots/procurement-documents.png)](./assets/screenshots/procurement-documents.png) |
+
+### เบิกเงินเดือน
+
+[![หน้าต่างหลักของระบบเบิกเงินเดือน Jangmao70](./assets/screenshots/payroll-window.png)](./assets/screenshots/payroll-window.png)
+
+<p align="center"><a href="https://robbygrean.github.io/Jangmao70/#screenshots">ดูภาพหน้าจอทั้งหมดบนเว็บไซต์ →</a></p>
+
+## จากข้อมูลสู่เอกสาร Word
+
+![Workflow ของผู้ใช้ Jangmao70 ตั้งแต่เลือกงานจนถึงสร้างเอกสาร](./assets/readme/jangmao70-user-workflow.svg)
+
+<details>
+<summary><strong>ดูการเชื่อมโยงข้อมูลภายในและหลักการของ Template</strong></summary>
+
+<br>
 
 ![การเชื่อมโยงข้อมูลภายในของ Jangmao70](./assets/readme/jangmao70-data-flow.svg)
 
-## หลักการสำคัญ
+- การโหลด Template ข้ามงานใช้ข้อมูลร่วมที่เกี่ยวข้องกับปลายทาง
+- งวดเบิก รายการเอกสาร Template ที่บันทึก และโฟลเดอร์ผลลัพธ์ยังแยกตามงาน
+- การบันทึก Template คือการเก็บข้อมูลในฟอร์มไว้ใช้ครั้งต่อไป ไม่ใช่การแก้แม่แบบ Word ต้นฉบับ
 
-- ข้อมูลร่วมที่จำเป็น เช่น ชื่อ ที่อยู่ และกรรมการ สามารถนำไปใช้กับอีกแท็บผ่านการโหลด Template ได้
-- งวดเบิก รายการเอกสาร Template ที่บันทึก และ Output ยังคงแยกตามแท็บ
-- ข้อมูลและเอกสารทำงานแบบ local ในเครื่อง ไม่ต้องใช้ npm หรือระบบ cloud เพื่อใช้งานโปรแกรม
-- ช่องที่ไม่ได้กรอกอาจถูกแทนด้วยจุดในเอกสารตามกติกาของระบบ จึงควรตรวจเอกสารก่อนนำไปใช้จริง
+</details>
 
-## โครงสร้าง repository
+> [!IMPORTANT]
+> ตรวจเอกสาร Word ก่อนนำไปใช้จริง ช่องที่ไม่ได้กรอกอาจถูกแทนด้วยจุดตามกติกาของระบบ
+
+<img src="./assets/readme/divider.svg" width="100%" alt="">
+
+## ดาวน์โหลดและคู่มือ
+
+| ต้องการทำอะไร | ไปที่นี่ |
+| :--- | :--- |
+| **ดาวน์โหลดโปรแกรมสำหรับ Windows** | **[เปิดหน้าดาวน์โหลด](https://robbygrean.github.io/Jangmao70/)** |
+| ดาวน์โหลดไฟล์ติดตั้งโดยตรง | [Jangmao70-Installer.zip](./assets/downloads/Jangmao70-Installer.zip) |
+| อ่านวิธีติดตั้งและใช้งาน | [คู่มือบนเว็บไซต์](https://robbygrean.github.io/Jangmao70/guide.html) · [คู่มือใน repository](./GUIDE.md) |
+| ศึกษา Source code | [Jangmao70-Source.zip](./assets/downloads/Jangmao70-Source.zip) |
+| ดูเนื้อหาและข้อกำหนดเว็บไซต์ | [SITE_CONTENT_BRIEF.md](./SITE_CONTENT_BRIEF.md) |
+
+**การอัปเดต:** ดาวน์โหลด Installer รุ่นใหม่แล้วติดตั้งทับตามคู่มือ ปัจจุบันยังไม่มีระบบ updater หรือ npm installer
+
+<details>
+<summary><strong>สำหรับผู้พัฒนา — โครงสร้าง repository</strong></summary>
 
 ```text
 assets/
 ├─ downloads/       ไฟล์ Installer และ Source สำหรับดาวน์โหลด
 ├─ guide/           ภาพประกอบคำเตือนการดาวน์โหลด
-├─ screenshots/     ภาพหน้าจออ้างอิงของทั้งสอง workflow
-└─ readme/          diagram สำหรับ README
+├─ screenshots/     ภาพหน้าจอจริงของทั้งสอง workflow
+└─ readme/          HERO ปุ่มดาวน์โหลด และแผนภาพสำหรับ README
 Config/             config ของ workflow และ Template
 Modules/            โมดูลจัดซื้อจัดจ้าง
 Shared/             core, renderer และการโอนข้อมูลระหว่าง Template
@@ -61,4 +129,18 @@ index.html          เว็บไซต์หลัก
 README.md           หน้าสรุปโครงการ
 ```
 
-โปรเจกต์นี้ยังไม่มีระบบ updater หรือ npm installer การอัปเดตในตอนนี้ให้ดาวน์โหลด Installer รุ่นใหม่จาก GitHub แล้วติดตั้งทับตามคู่มือ
+</details>
+
+<br>
+
+<div align="center">
+
+### Jangmao70
+
+**เตรียมข้อมูล · ตรวจให้ครบ · สร้างเอกสาร Word**
+
+<a href="https://robbygrean.github.io/Jangmao70/"><img src="./assets/readme/download-button.svg" alt="ดาวน์โหลดโปรแกรม Jangmao70" width="360"></a>
+
+พัฒนาโดย [RobbyGrean](https://github.com/RobbyGrean)
+
+</div>
