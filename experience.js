@@ -43,7 +43,7 @@
   const dots = [...carousel.querySelectorAll('[data-slide]')];
   const caption = carousel.querySelector('figcaption');
   const pause = carousel.querySelector('[data-carousel="pause"]');
-  let current = 0, timer, paused = reduced.matches, hovered = false, focused = false;
+  let current = 0, timer, paused = false, hovered = false, focused = false;
   function render() {
     slides.forEach((slide, index) => { slide.hidden = index !== current; });
     dots.forEach((dot, index) => dot.setAttribute('aria-pressed', String(index === current)));
@@ -56,7 +56,7 @@
     caption.setAttribute('aria-live', running ? 'off' : 'polite');
     pause.textContent = paused ? 'เล่น' : 'หยุด';
     pause.setAttribute('aria-label', paused ? 'เริ่มหมุนภาพอัตโนมัติ' : 'หยุดหมุนภาพอัตโนมัติ');
-    if (running) timer = setInterval(() => { current = (current + 1) % slides.length; render(); }, 6500);
+    if (running) timer = setInterval(() => { current = (current + 1) % slides.length; render(); }, 4000);
   }
   function select(index) { current = (index + slides.length) % slides.length; paused = true; render(); schedule(); }
   carousel.querySelector('[data-carousel="prev"]').addEventListener('click', () => select(current - 1));
@@ -77,4 +77,3 @@
   carousel.querySelector('.carousel-controls').hidden = false;
   render(); schedule();
 })();
-
