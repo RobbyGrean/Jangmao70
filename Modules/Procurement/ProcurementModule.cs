@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -876,7 +877,19 @@ namespace Jangmao70
             {
                 Cursor.Current = Cursors.Default;
             }
-            MessageBox.Show("สร้างเอกสารครบ " + created.Count + " ไฟล์แล้ว\n" + outputRoot, "สำเร็จ", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            var openOutput = MessageBox.Show(
+                "สร้างเอกสารครบ " + created.Count + " ไฟล์แล้ว\n" + outputRoot + "\n\nกรุณาตรวจสอบข้อมูล และจัดหน้ากระดาษให้เรียบร้อยด้วยนะจ๊ะ\n\nต้องการเปิดโฟลเดอร์ output ตอนนี้หรือไม่?",
+                "สำเร็จ",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Information);
+            if (openOutput == DialogResult.Yes)
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = outputRoot,
+                    UseShellExecute = true
+                });
+            }
         }
 
         private Dictionary<string, string> BuildValues(WorkingRecord source)
