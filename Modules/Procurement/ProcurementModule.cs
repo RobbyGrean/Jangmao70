@@ -251,7 +251,6 @@ namespace ReimbursementDocApp
             header.Controls.Add(subtitle);
             header.Controls.Add(title);
             header.Controls.Add(accentBar);
-            Controls.Add(header);
 
             var footer = new Panel { Dock = DockStyle.Bottom, Height = 68, BackColor = Color.White, Padding = new Padding(20, 12, 20, 12) };
             footer.Controls.Add(new Panel { Dock = DockStyle.Top, Height = 1, BackColor = ModuleBorder });
@@ -275,7 +274,6 @@ namespace ReimbursementDocApp
             save.Dock = DockStyle.Right;
             save.Click += delegate { SaveCurrentTemplate(); };
             footer.Controls.Add(save);
-            Controls.Add(footer);
 
             var body = new Panel { Dock = DockStyle.Fill, BackColor = ModuleBackground };
             var navigation = new Panel { Dock = DockStyle.Left, Width = 350, BackColor = Color.White, BorderStyle = BorderStyle.FixedSingle, Padding = new Padding(20, 16, 16, 16) };
@@ -298,7 +296,12 @@ namespace ReimbursementDocApp
             }
             body.Controls.Add(contentHost);
             body.Controls.Add(navigation);
+
+            // Dock order is intentional: the last control is laid out first in WinForms.
+            // Put the fill body first so it cannot cover the fixed header or action bar.
             Controls.Add(body);
+            Controls.Add(footer);
+            Controls.Add(header);
             BuildSchoolSection(sectionPanels[0]);
             BuildCommitteeSection(sectionPanels[1]);
             BuildEmployeeSection(sectionPanels[2]);
