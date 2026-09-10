@@ -329,7 +329,7 @@ namespace ReimbursementDocApp
 
             private void AddDeliveryCard(Panel parent, ref int y)
             {
-                var card = AddSection(parent, ref y, "1 · ข้อมูลการส่งมอบ ใบสั่งจ้าง และผู้รับจ้าง", Color.FromArgb(61, 128, 214), 570);
+                var card = AddSection(parent, ref y, "1 · ข้อมูลการส่งมอบ ใบสั่งจ้าง และผู้รับจ้าง", Color.FromArgb(61, 128, 214), 590);
                 AddLabel(card, "เดือนที่ส่งมอบ", 22, 42, 160);
                 AddText(card, TagDeliveryMonth, 22, 66, 190, true);
                 AddLabel(card, "งวดงาน", 230, 42, 100);
@@ -363,8 +363,9 @@ namespace ReimbursementDocApp
                 salaryTextBox = AddText(card, TagSalaryText, 470, 288, 220, true);
                 fieldBoxes["{ตำแหน่ง}"] = positionBox;
 
-                AddPersonRow(card, 22, 330, "ผู้รับจ้าง", "{คำนำหน้าลูกจ้าง}", TagEmployeeName, "{นามสกุลลูกจ้าง}");
-                AddAddressFields(card, 22, 440);
+                AddRowDivider(card, 326);
+                AddPersonRow(card, 22, 350, "ผู้รับจ้าง", "{คำนำหน้าลูกจ้าง}", TagEmployeeName, "{นามสกุลลูกจ้าง}");
+                AddAddressFields(card, 22, 458);
             }
 
             private void AddSignerCard(Panel parent, ref int y)
