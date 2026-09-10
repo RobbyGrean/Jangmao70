@@ -28,10 +28,10 @@ namespace ReimbursementDocApp
         {
             Text = "Jangmao70";
             StartPosition = FormStartPosition.CenterScreen;
-            ClientSize = new System.Drawing.Size(1160, 800);
-            MinimumSize = new System.Drawing.Size(980, 700);
-            BackColor = Color.White;
-            Font = new Font("Tahoma", 10.5f);
+            ClientSize = new System.Drawing.Size(1220, 850);
+            MinimumSize = new System.Drawing.Size(1080, 760);
+            BackColor = Color.FromArgb(243, 246, 248);
+            Font = new Font("Segoe UI", 10f);
             tabs.Dock = DockStyle.Fill;
             tabs.DrawMode = TabDrawMode.OwnerDrawFixed;
             tabs.SizeMode = TabSizeMode.Fixed;
@@ -49,9 +49,9 @@ namespace ReimbursementDocApp
         private void DrawTab(object sender, DrawItemEventArgs e)
         {
             var selected = e.Index == tabs.SelectedIndex;
-            var accent = e.Index == 0 ? Color.FromArgb(76, 149, 108) : Color.FromArgb(83, 151, 226);
+            var accent = e.Index == 0 ? Color.FromArgb(15, 118, 110) : Color.FromArgb(31, 94, 140);
             var background = selected ? accent : Color.White;
-            var foreground = selected ? Color.White : Color.FromArgb(45, 55, 72);
+            var foreground = selected ? Color.White : Color.FromArgb(30, 41, 59);
             using (var backgroundBrush = new SolidBrush(background))
             using (var foregroundBrush = new SolidBrush(foreground))
                 using (var font = new Font(tabs.Font, selected ? FontStyle.Bold : FontStyle.Regular))
@@ -65,7 +65,7 @@ namespace ReimbursementDocApp
 
         private void BuildPayrollTab()
         {
-            var page = new TabPage("เบิกเงินเดือน") { BackColor = System.Drawing.Color.White, AutoScroll = true };
+            var page = new TabPage("เบิกเงินเดือน") { BackColor = Color.FromArgb(243, 246, 248), AutoScroll = true };
             payrollForm = CreateLegacyPayrollForm();
             payrollForm.TopLevel = false;
             payrollForm.FormBorderStyle = FormBorderStyle.None;
@@ -77,7 +77,7 @@ namespace ReimbursementDocApp
 
         private void BuildProcurementTab()
         {
-            var page = new TabPage("จัดซื้อจัดจ้างและสัญญา") { BackColor = System.Drawing.Color.FromArgb(245, 247, 250) };
+            var page = new TabPage("จัดซื้อจัดจ้างและสัญญา") { BackColor = Color.FromArgb(243, 246, 248) };
             procurementModule = new ProcurementModule(WorkingRecord.CreateEmpty(), null);
             page.Controls.Add(procurementModule);
             tabs.TabPages.Add(page);

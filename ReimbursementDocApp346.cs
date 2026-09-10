@@ -89,13 +89,15 @@ namespace ReimbursementDocApp
 
         private sealed class MainForm : Form
         {
-            private readonly Color Navy = Color.FromArgb(54, 102, 180);
-            private readonly Color NavyMid = Color.FromArgb(255, 132, 168);
-            private readonly Color Gold = Color.FromArgb(255, 194, 94);
-            private readonly Color Bg = Color.FromArgb(248, 245, 255);
-            private readonly Color Border = Color.FromArgb(218, 226, 238);
-            private readonly Font UiFont = new Font("Tahoma", 10.5f, FontStyle.Regular);
-            private readonly Font LabelFont = new Font("Tahoma", 10.0f, FontStyle.Bold);
+            private readonly Color Navy = Color.FromArgb(24, 56, 82);
+            private readonly Color NavyMid = Color.FromArgb(31, 94, 140);
+            private readonly Color PrimaryDark = Color.FromArgb(22, 72, 108);
+            private readonly Color Bg = Color.FromArgb(243, 246, 248);
+            private readonly Color Border = Color.FromArgb(214, 224, 232);
+            private readonly Color TextColor = Color.FromArgb(30, 41, 59);
+            private readonly Color MutedText = Color.FromArgb(100, 116, 139);
+            private readonly Font UiFont = new Font("Segoe UI", 10.0f, FontStyle.Regular);
+            private readonly Font LabelFont = new Font("Segoe UI", 9.5f, FontStyle.Bold);
             private readonly Dictionary<string, string[]> templates;
             private readonly TextBox templateBox = new TextBox();
             private readonly TextBox outputBox = new TextBox();
@@ -127,12 +129,13 @@ namespace ReimbursementDocApp
             {
                 this.templates = templates;
                 LoadLocalDatabase();
-                Text = "\u0e2d\u0e2d\u0e01\u0e40\u0e2d\u0e01\u0e2a\u0e32\u0e23\u0e01\u0e32\u0e23\u0e40\u0e1a\u0e34\u0e01\u0e08\u0e48\u0e32\u0e22";
-                Size = new Size(1120, 780);
-                MinimumSize = new Size(980, 700);
+                Text = "Jangmao70  |  ระบบเบิกเงินเดือน";
+                ClientSize = new Size(1220, 820);
+                MinimumSize = new Size(1080, 720);
                 StartPosition = FormStartPosition.CenterScreen;
                 BackColor = Bg;
                 Font = UiFont;
+                AutoScaleMode = AutoScaleMode.Dpi;
                 SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
                 UpdateStyles();
                 SuspendLayout();
@@ -142,7 +145,6 @@ namespace ReimbursementDocApp
                 BuildFiscalControls();
                 BuildTemplateList();
                 BuildFields();
-                BuildChecklist();
                 BuildActions();
                 LoadSavedTemplates();
                 ApplyFiscalValues();
@@ -153,75 +155,82 @@ namespace ReimbursementDocApp
 
             private void BuildHeader()
             {
-                var header = new Panel { Location = new Point(0, 0), Size = new Size(1120, 82), BackColor = Color.FromArgb(83, 151, 226), Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right };
+                var header = new Panel { Location = new Point(0, 0), Size = new Size(ClientSize.Width, 76), BackColor = Navy, Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right };
                 Controls.Add(header);
 
                 var title = new Label
                 {
-                    Text = "ระบบออกเอกสารเบิกจ่าย  ✿",
+                    Text = "Jangmao70  |  ระบบเบิกเงินเดือน",
                     ForeColor = Color.White,
-                    Font = new Font("Tahoma", 18f, FontStyle.Bold),
-                    Location = new Point(24, 14),
-                    Size = new Size(460, 30)
+                    Font = new Font("Segoe UI", 17f, FontStyle.Bold),
+                    Location = new Point(24, 12),
+                    Size = new Size(610, 32)
                 };
                 header.Controls.Add(title);
 
                 var sub = new Label
                 {
-                    Text = "กรอกข้อมูลครั้งเดียว ตรวจสอบก่อนสร้าง แล้วออกเอกสาร Word จาก template เดิม",
-                    ForeColor = Color.FromArgb(250, 252, 255),
-                    Location = new Point(26, 48),
-                    Size = new Size(680, 22)
+                    Text = "สร้างเอกสาร Word จากแม่แบบที่ตรวจสอบแล้ว — ทำงานแบบออฟไลน์และเก็บข้อมูลไว้ในเครื่อง",
+                    ForeColor = Color.FromArgb(213, 229, 240),
+                    Font = new Font("Segoe UI", 9.5f, FontStyle.Regular),
+                    Location = new Point(26, 46),
+                    Size = new Size(730, 22)
                 };
                 header.Controls.Add(sub);
 
                 statusLabel.Text = "พร้อมใช้งาน";
                 statusLabel.TextAlign = ContentAlignment.MiddleRight;
                 statusLabel.ForeColor = Color.White;
-                statusLabel.Font = new Font("Tahoma", 10.5f, FontStyle.Bold);
-                statusLabel.Location = new Point(760, 26);
-                statusLabel.Size = new Size(330, 28);
+                statusLabel.Font = new Font("Segoe UI", 10f, FontStyle.Bold);
+                statusLabel.Location = new Point(ClientSize.Width - 390, 17);
+                statusLabel.Size = new Size(360, 24);
                 statusLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
                 header.Controls.Add(statusLabel);
 
-                var flowers = new Label
+                var privacy = new Label
                 {
-                    Text = "✿  ❀  ✿",
-                    ForeColor = Color.FromArgb(255, 245, 180),
-                    Font = new Font("Tahoma", 18f, FontStyle.Bold),
+                    Text = "OFFLINE  •  LOCAL DATA",
+                    ForeColor = Color.FromArgb(166, 202, 226),
+                    Font = new Font("Segoe UI", 8.5f, FontStyle.Bold),
                     TextAlign = ContentAlignment.MiddleRight,
-                    Location = new Point(950, 48),
-                    Size = new Size(140, 26),
+                    Location = new Point(ClientSize.Width - 260, 44),
+                    Size = new Size(230, 20),
                     Anchor = AnchorStyles.Top | AnchorStyles.Right
                 };
-                header.Controls.Add(flowers);
+                header.Controls.Add(privacy);
             }
 
             private void BuildTopInputs()
             {
-                var panel = CreateCard(new Point(16, 96), new Size(1070, 78), "ตำแหน่งไฟล์");
+                var panel = CreateCard(new Point(20, 92), new Size(ClientSize.Width - 40, 72), "พื้นที่ทำงาน");
+                panel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
                 Controls.Add(panel);
 
                 templateBox.Text = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Template");
-                panel.Controls.Add(new Label { Text = "Template", Font = LabelFont, Location = new Point(16, 32), Size = new Size(80, 22) });
-                panel.Controls.Add(new Label { Text = "ใช้ Template จากโฟลเดอร์ติดตั้งอัตโนมัติ", Location = new Point(100, 32), Size = new Size(330, 22), ForeColor = Color.FromArgb(80, 95, 115) });
+                templateBox.Visible = false;
+                panel.Controls.Add(templateBox);
+                panel.Controls.Add(new Label { Text = "แม่แบบเอกสาร", Font = LabelFont, Location = new Point(16, 34), Size = new Size(105, 22), ForeColor = TextColor });
+                panel.Controls.Add(new Label { Text = "จัดเก็บและจัดกลุ่มในโฟลเดอร์ Template ของโปรแกรม", Location = new Point(124, 34), Size = new Size(345, 22), ForeColor = MutedText });
 
-                panel.Controls.Add(new Label { Text = "Output", Font = LabelFont, Location = new Point(456, 32), Size = new Size(70, 22) });
+                panel.Controls.Add(new Label { Text = "โฟลเดอร์ผลลัพธ์", Font = LabelFont, Location = new Point(500, 34), Size = new Size(120, 22), ForeColor = TextColor });
                 outputBox.Text = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "output");
-                outputBox.Location = new Point(528, 29);
-                outputBox.Size = new Size(400, 24);
+                outputBox.Location = new Point(622, 30);
+                outputBox.Size = new Size(panel.Width - 748, 26);
+                outputBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
                 panel.Controls.Add(outputBox);
 
-                var outputButton = new Button { Text = "\u0e40\u0e25\u0e37\u0e2d\u0e01", Location = new Point(940, 27), Size = new Size(80, 28) };
+                var outputButton = CreateSecondaryButton("เลือก...", new Point(panel.Width - 112, 28), new Size(92, 30));
+                outputButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
                 outputButton.Click += delegate { PickFolder(outputBox); };
                 panel.Controls.Add(outputButton);
             }
 
             private void BuildFiscalControls()
             {
-                var group = CreateCard(new Point(16, 188), new Size(1070, 86), "\u0e07\u0e27\u0e14\u0e2a\u0e48\u0e07\u0e21\u0e2d\u0e1a / \u0e1b\u0e35\u0e07\u0e1a\u0e1b\u0e23\u0e30\u0e21\u0e32\u0e13");
+                var group = CreateCard(new Point(20, 176), new Size(ClientSize.Width - 40, 82), "งวดส่งมอบและปีงบประมาณ");
+                group.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
                 Controls.Add(group);
-                group.Controls.Add(new Label { Text = "\u0e40\u0e14\u0e37\u0e2d\u0e19\u0e2a\u0e48\u0e07\u0e21\u0e2d\u0e1a", Font = LabelFont, Location = new Point(16, 38), Size = new Size(115, 22) });
+                group.Controls.Add(new Label { Text = "เดือนส่งมอบ", Font = LabelFont, Location = new Point(16, 38), Size = new Size(105, 22), ForeColor = TextColor });
 
                 fiscalMonthBox.DropDownStyle = ComboBoxStyle.DropDownList;
                 if (monthOptions.Count > 0)
@@ -236,7 +245,7 @@ namespace ReimbursementDocApp
                     for (var i = 1; i <= 12; i++) fiscalMonthBox.Items.Add(ThaiMonths[i]);
                     fiscalMonthBox.SelectedIndex = DateTime.Today.Month - 1;
                 }
-                fiscalMonthBox.Location = new Point(136, 34);
+                fiscalMonthBox.Location = new Point(126, 34);
                 fiscalMonthBox.Size = new Size(160, 24);
                 fiscalMonthBox.SelectedIndexChanged += delegate
                 {
@@ -245,37 +254,38 @@ namespace ReimbursementDocApp
                 };
                 group.Controls.Add(fiscalMonthBox);
 
-                group.Controls.Add(new Label { Text = "\u0e1b\u0e35 \u0e1e.\u0e28.", Font = LabelFont, Location = new Point(318, 38), Size = new Size(70, 22) });
+                group.Controls.Add(new Label { Text = "ปี พ.ศ.", Font = LabelFont, Location = new Point(312, 38), Size = new Size(64, 22), ForeColor = TextColor });
                 fiscalYearBox.Minimum = 2500;
                 fiscalYearBox.Maximum = 2700;
                 fiscalYearBox.Value = DateTime.Today.Year + 543;
-                fiscalYearBox.Location = new Point(390, 34);
+                fiscalYearBox.Location = new Point(378, 34);
                 fiscalYearBox.Size = new Size(90, 24);
                 fiscalYearBox.ValueChanged += delegate { ApplyFiscalValues(); };
                 group.Controls.Add(fiscalYearBox);
 
                 fiscalPreview.Location = new Point(500, 34);
-                fiscalPreview.Size = new Size(400, 26);
-                fiscalPreview.Font = new Font("Tahoma", 10.5f, FontStyle.Bold);
-                fiscalPreview.ForeColor = Navy;
+                fiscalPreview.Size = new Size(430, 26);
+                fiscalPreview.Font = new Font("Segoe UI", 10.5f, FontStyle.Bold);
+                fiscalPreview.ForeColor = NavyMid;
                 group.Controls.Add(fiscalPreview);
 
                 monthGuideLabel.Text = "ตรวจแค่เดือนก่อนสร้างเอกสาร";
                 monthGuideLabel.Location = new Point(500, 56);
                 monthGuideLabel.Size = new Size(260, 20);
-                monthGuideLabel.ForeColor = Color.FromArgb(177, 92, 0);
+                monthGuideLabel.ForeColor = Color.FromArgb(161, 98, 7);
                 monthGuideLabel.Visible = false;
                 group.Controls.Add(monthGuideLabel);
             }
 
             private void BuildTemplateList()
             {
-                var group = CreateCard(new Point(16, 288), new Size(320, 320), "\u0e40\u0e2d\u0e01\u0e2a\u0e32\u0e23\u0e17\u0e35\u0e48\u0e08\u0e30\u0e2a\u0e23\u0e49\u0e32\u0e07");
+                var group = CreateCard(new Point(20, 274), new Size(350, ClientSize.Height - 356), "กลุ่มและแม่แบบเอกสาร");
+                group.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
                 Controls.Add(group);
                 var y = 28;
                 foreach (var name in templates.Keys)
                 {
-                    var check = new CheckBox { Text = name, Checked = true, Location = new Point(12, y), Size = new Size(270, 24) };
+                    var check = new CheckBox { Text = name, Checked = true, Location = new Point(14, y + 8), Size = new Size(320, 26), Font = UiFont, ForeColor = TextColor };
                     group.Controls.Add(check);
                     templateChecks[name] = check;
                     y += 30;
@@ -284,7 +294,7 @@ namespace ReimbursementDocApp
 
             private void BuildFields()
             {
-                var panel = new Panel { Location = new Point(352, 288), Size = new Size(734, 400), AutoScroll = true, BackColor = Bg, Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom };
+                var panel = new Panel { Location = new Point(386, 274), Size = new Size(ClientSize.Width - 406, ClientSize.Height - 356), AutoScroll = true, BackColor = Bg, Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom };
                 Controls.Add(panel);
                 var y = 0;
 
@@ -376,16 +386,18 @@ namespace ReimbursementDocApp
             private void AddCommitteeCard(Panel parent, ref int y)
             {
                 var card = AddSection(parent, ref y, "3 · คณะกรรมการตรวจรับพัสดุ", Color.FromArgb(79, 181, 139), 260);
-                AddCommitteeRow(card, 22, 64, "ประธานกรรมการ (A)", "{กรรมการA}");
-                AddCommitteeRow(card, 22, 136, "กรรมการ (B)", "{กรรมการB}");
-                AddCommitteeRow(card, 22, 208, "กรรมการ (C)", "{กรรมการC}");
+                AddCommitteeRow(card, 22, 64, "กรรมการ 1 (ประธาน)", "{กรรมการA}");
+                AddCommitteeRow(card, 22, 136, "กรรมการ 2", "{กรรมการB}");
+                AddCommitteeRow(card, 22, 208, "กรรมการ 3", "{กรรมการC}");
             }
 
             private Panel AddSection(Panel parent, ref int y, string title, Color color, int height)
             {
-                var card = new Panel { Location = new Point(0, y), Size = new Size(706, height), BackColor = Color.FromArgb(255, 255, 255), BorderStyle = BorderStyle.FixedSingle };
+                var card = new Panel { Location = new Point(0, y), Size = new Size(782, height), BackColor = Color.White, BorderStyle = BorderStyle.FixedSingle };
                 parent.Controls.Add(card);
-                var head = new Label { Text = title, Location = new Point(0, 0), Size = new Size(706, 36), BackColor = color, ForeColor = Color.White, Font = new Font("Tahoma", 11f, FontStyle.Bold), TextAlign = ContentAlignment.MiddleLeft, Padding = new Padding(18, 0, 0, 0) };
+                var accentBar = new Panel { Location = new Point(0, 0), Size = new Size(5, 36), BackColor = color };
+                card.Controls.Add(accentBar);
+                var head = new Label { Text = title, Location = new Point(5, 0), Size = new Size(775, 36), BackColor = Color.FromArgb(248, 250, 252), ForeColor = TextColor, Font = new Font("Segoe UI", 10.5f, FontStyle.Bold), TextAlign = ContentAlignment.MiddleLeft, Padding = new Padding(14, 0, 0, 0) };
                 card.Controls.Add(head);
                 y += height + 16;
                 return card;
@@ -453,14 +465,14 @@ namespace ReimbursementDocApp
 
             private void AddRowDivider(Control parent, int y)
             {
-                var divider = new Panel { Location = new Point(22, y), Size = new Size(646, 1), BackColor = Color.FromArgb(226, 232, 240) };
+                var divider = new Panel { Location = new Point(22, y), Size = new Size(720, 1), BackColor = Color.FromArgb(226, 232, 240) };
                 parent.Controls.Add(divider);
                 divider.BringToFront();
             }
 
             private Label AddLabel(Control parent, string text, int x, int y, int width)
             {
-                var label = new Label { Text = text, Font = LabelFont, Location = new Point(x, y), Size = new Size(width, 20), ForeColor = Color.FromArgb(30, 45, 65) };
+                var label = new Label { Text = text, Font = LabelFont, Location = new Point(x, y), Size = new Size(width, 20), ForeColor = TextColor };
                 parent.Controls.Add(label);
                 return label;
             }
@@ -470,9 +482,9 @@ namespace ReimbursementDocApp
                 var box = new TextBox { Location = new Point(x, y), Size = new Size(width, 26), ReadOnly = readOnly, BorderStyle = BorderStyle.FixedSingle };
                 if (readOnly)
                 {
-                    box.BackColor = Color.FromArgb(238, 246, 255);
-                    box.ForeColor = Navy;
-                    box.Font = new Font("Tahoma", 10.5f, FontStyle.Bold);
+                    box.BackColor = Color.FromArgb(239, 246, 250);
+                    box.ForeColor = PrimaryDark;
+                    box.Font = new Font("Segoe UI", 10f, FontStyle.Bold);
                 }
                 box.TextChanged += delegate { errorProvider.SetError(box, ""); };
                 parent.Controls.Add(box);
@@ -1175,29 +1187,35 @@ namespace ReimbursementDocApp
 
             private void BuildActions()
             {
-                var manageButton = new Button { Text = "จัดการ Template", Location = new Point(352, 700), Size = new Size(160, 44), BackColor = Color.White, ForeColor = Navy, FlatStyle = FlatStyle.Flat, Font = new Font("Tahoma", 10.5f, FontStyle.Bold) };
-                manageButton.Anchor = AnchorStyles.Left | AnchorStyles.Bottom;
-                manageButton.FlatAppearance.BorderColor = Border;
+                var actionBar = new Panel { Dock = DockStyle.Bottom, Height = 68, BackColor = Color.White, Padding = new Padding(20, 12, 20, 12) };
+                actionBar.Paint += delegate(object sender, PaintEventArgs e)
+                {
+                    using (var pen = new Pen(Border)) e.Graphics.DrawLine(pen, 0, 0, actionBar.Width, 0);
+                };
+
+                var hint = new Label { Text = "ตรวจงวดและปีงบประมาณก่อนสร้างทุกครั้ง", Location = new Point(20, 23), Size = new Size(315, 24), ForeColor = MutedText, Font = new Font("Segoe UI", 9.5f, FontStyle.Regular) };
+                actionBar.Controls.Add(hint);
+
+                var manageButton = CreateSecondaryButton("จัดการ Template", new Point(actionBar.Width - 758, 12), new Size(145, 42));
+                manageButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
                 manageButton.Click += delegate { OpenTemplateManager(); };
-                Controls.Add(manageButton);
+                actionBar.Controls.Add(manageButton);
 
-                var saveButton = new Button { Text = "บันทึกเป็น Template", Location = new Point(526, 700), Size = new Size(180, 44), BackColor = Gold, ForeColor = Color.FromArgb(65, 40, 0), FlatStyle = FlatStyle.Flat, Font = new Font("Tahoma", 10.5f, FontStyle.Bold) };
-                saveButton.Anchor = AnchorStyles.Left | AnchorStyles.Bottom;
-                saveButton.FlatAppearance.BorderSize = 0;
+                var saveButton = CreateSecondaryButton("บันทึกเป็น Template", new Point(actionBar.Width - 603, 12), new Size(145, 42));
+                saveButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
                 saveButton.Click += delegate { SaveTemplateFlow(); };
-                Controls.Add(saveButton);
+                actionBar.Controls.Add(saveButton);
 
-                var quickLoadButton = new Button { Text = "เหมือนเดิม! แค่เปลี่ยนเดือน!", Location = new Point(720, 700), Size = new Size(220, 44), BackColor = Color.FromArgb(255, 237, 181), ForeColor = Color.FromArgb(100, 64, 0), FlatStyle = FlatStyle.Flat, Font = new Font("Tahoma", 10.5f, FontStyle.Bold) };
-                quickLoadButton.Anchor = AnchorStyles.Left | AnchorStyles.Bottom;
-                quickLoadButton.FlatAppearance.BorderSize = 0;
+                var quickLoadButton = CreateSecondaryButton("เหมือนเดิม! แค่เปลี่ยนเดือน!", new Point(actionBar.Width - 448, 12), new Size(208, 42));
+                quickLoadButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
                 quickLoadButton.Click += delegate { QuickLoadTemplateFlow(); };
-                Controls.Add(quickLoadButton);
+                actionBar.Controls.Add(quickLoadButton);
 
-                var button = new Button { Text = "\u0e15\u0e23\u0e27\u0e08\u0e2a\u0e2d\u0e1a\u0e41\u0e25\u0e49\u0e27\u0e2a\u0e23\u0e49\u0e32\u0e07 Word", Location = new Point(950, 700), Size = new Size(136, 44), BackColor = NavyMid, ForeColor = Color.White, FlatStyle = FlatStyle.Flat, Font = new Font("Tahoma", 10.5f, FontStyle.Bold) };
-                button.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
-                button.FlatAppearance.BorderSize = 0;
+                var button = CreatePrimaryButton("ตรวจสอบและสร้าง Word", new Point(actionBar.Width - 226, 12), new Size(206, 42));
+                button.Anchor = AnchorStyles.Top | AnchorStyles.Right;
                 button.Click += delegate { GenerateDocuments(); };
-                Controls.Add(button);
+                actionBar.Controls.Add(button);
+                Controls.Add(actionBar);
             }
 
             private void ApplyFiscalValues()
@@ -1330,9 +1348,45 @@ namespace ReimbursementDocApp
 
             private Panel CreateCard(Point location, Size size, string title)
             {
-                var panel = new Panel { Location = location, Size = size, BackColor = Color.FromArgb(255, 255, 255), BorderStyle = BorderStyle.FixedSingle };
-                panel.Controls.Add(new Label { Text = FixThai(title), Font = new Font("Tahoma", 10.5f, FontStyle.Bold), ForeColor = Navy, Location = new Point(12, 6), Size = new Size(size.Width - 24, 22) });
+                var panel = new Panel { Location = location, Size = size, BackColor = Color.White, BorderStyle = BorderStyle.FixedSingle };
+                panel.Controls.Add(new Label { Text = FixThai(title), Font = new Font("Segoe UI", 10f, FontStyle.Bold), ForeColor = Navy, Location = new Point(12, 6), Size = new Size(size.Width - 24, 22), Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right });
                 return panel;
+            }
+
+            private Button CreateSecondaryButton(string text, Point location, Size size)
+            {
+                var button = new Button
+                {
+                    Text = text,
+                    Location = location,
+                    Size = size,
+                    BackColor = Color.White,
+                    ForeColor = PrimaryDark,
+                    FlatStyle = FlatStyle.Flat,
+                    Font = new Font("Segoe UI", 9.5f, FontStyle.Bold),
+                    Cursor = Cursors.Hand
+                };
+                button.FlatAppearance.BorderColor = Border;
+                button.FlatAppearance.MouseOverBackColor = Color.FromArgb(241, 247, 251);
+                return button;
+            }
+
+            private Button CreatePrimaryButton(string text, Point location, Size size)
+            {
+                var button = new Button
+                {
+                    Text = text,
+                    Location = location,
+                    Size = size,
+                    BackColor = NavyMid,
+                    ForeColor = Color.White,
+                    FlatStyle = FlatStyle.Flat,
+                    Font = new Font("Segoe UI", 10f, FontStyle.Bold),
+                    Cursor = Cursors.Hand
+                };
+                button.FlatAppearance.BorderSize = 0;
+                button.FlatAppearance.MouseOverBackColor = PrimaryDark;
+                return button;
             }
 
             private void NormalizeControlText(Control root)

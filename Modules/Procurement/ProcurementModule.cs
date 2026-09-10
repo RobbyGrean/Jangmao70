@@ -23,11 +23,15 @@ namespace ReimbursementDocApp
         private const string EmptyValue = ".............";
         private const string UnspecifiedOption = "-- ไม่ระบุ --";
         private const string PositionPlaceholder = "-- เลือกตำแหน่ง --";
-        private static readonly Color ModuleAccent = Color.FromArgb(76, 149, 108);
-        private static readonly Color ModuleAccentDark = Color.FromArgb(37, 97, 62);
+        private static readonly Color ModuleAccent = Color.FromArgb(15, 118, 110);
+        private static readonly Color ModuleAccentDark = Color.FromArgb(20, 83, 45);
         private static readonly Color ModuleAccentLight = Color.FromArgb(234, 245, 238);
-        private static readonly Color ModuleBackground = Color.FromArgb(248, 245, 255);
-        private static readonly Color ModuleBorder = Color.FromArgb(218, 226, 238);
+        private static readonly Color ModuleBackground = Color.FromArgb(243, 246, 248);
+        private static readonly Color ModuleBorder = Color.FromArgb(214, 224, 232);
+        private static readonly Color TextColor = Color.FromArgb(30, 41, 59);
+        private static readonly Color MutedText = Color.FromArgb(100, 116, 139);
+        private static readonly Color Navy = Color.FromArgb(24, 56, 82);
+        private static readonly Color PrimaryDark = Color.FromArgb(22, 72, 108);
         private static readonly string[] ThaiMonths = { "", "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม" };
 
         private readonly WorkingRecord record;
@@ -65,7 +69,8 @@ namespace ReimbursementDocApp
             sharedChanged = sharedChangedCallback;
             Dock = DockStyle.Fill;
             BackColor = ModuleBackground;
-            Font = new Font("Tahoma", 10.5f);
+            Font = new Font("Segoe UI", 10.0f);
+            AutoScaleMode = AutoScaleMode.Dpi;
             manifest = LoadManifest();
             LoadCatalog();
             try
@@ -193,6 +198,42 @@ namespace ReimbursementDocApp
             return Document346Config.Load<ProcurementManifest>(path);
         }
 
+        private Button CreateSecondaryButton(string text, Point location, Size size)
+        {
+            var button = new Button
+            {
+                Text = text,
+                Location = location,
+                Size = size,
+                BackColor = Color.White,
+                ForeColor = PrimaryDark,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 9.5f, FontStyle.Bold),
+                Cursor = Cursors.Hand
+            };
+            button.FlatAppearance.BorderColor = ModuleBorder;
+            button.FlatAppearance.MouseOverBackColor = Color.FromArgb(241, 247, 251);
+            return button;
+        }
+
+        private Button CreatePrimaryButton(string text, Point location, Size size)
+        {
+            var button = new Button
+            {
+                Text = text,
+                Location = location,
+                Size = size,
+                BackColor = ModuleAccent,
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 10f, FontStyle.Bold),
+                Cursor = Cursors.Hand
+            };
+            button.FlatAppearance.BorderSize = 0;
+            button.FlatAppearance.MouseOverBackColor = ModuleAccentDark;
+            return button;
+        }
+
         private void LoadCatalog()
         {
             var path = Path.Combine(Document346Paths.ShippedConfigRoot(DocumentModule.Procurement), "position_catalog.json");
@@ -203,42 +244,44 @@ namespace ReimbursementDocApp
 
         private void BuildShell()
         {
-            var header = new Panel { Dock = DockStyle.Top, Height = 82, BackColor = ModuleAccent, Padding = new Padding(24, 12, 24, 10) };
-            var title = new Label { Text = "จัดซื้อจัดจ้างและสัญญา", Font = new Font("Tahoma", 18f, FontStyle.Bold), ForeColor = Color.White, Dock = DockStyle.Left, Width = 390, TextAlign = ContentAlignment.MiddleLeft };
-            var subtitle = new Label { Text = "กรอกข้อมูลครั้งเดียว ตรวจสอบก่อนสร้าง แล้วออกเอกสารจาก Template", ForeColor = Color.FromArgb(245, 253, 247), TextAlign = ContentAlignment.MiddleRight, Dock = DockStyle.Fill };
+            var header = new Panel { Dock = DockStyle.Top, Height = 76, BackColor = Navy, Padding = new Padding(24, 12, 24, 10) };
+            var accentBar = new Panel { Dock = DockStyle.Left, Width = 5, BackColor = ModuleAccent };
+            var title = new Label { Text = "Jangmao70  |  จัดซื้อจัดจ้างและสัญญา", Font = new Font("Segoe UI", 17f, FontStyle.Bold), ForeColor = Color.White, Dock = DockStyle.Left, Width = 520, TextAlign = ContentAlignment.MiddleLeft, Padding = new Padding(12, 0, 0, 0) };
+            var subtitle = new Label { Text = "สร้างเอกสารจากแม่แบบที่ตรวจสอบแล้ว — ทำงานแบบออฟไลน์และเก็บข้อมูลไว้ในเครื่อง", Font = new Font("Segoe UI", 9.5f), ForeColor = Color.FromArgb(213, 229, 240), TextAlign = ContentAlignment.MiddleRight, Dock = DockStyle.Fill };
             header.Controls.Add(subtitle);
             header.Controls.Add(title);
+            header.Controls.Add(accentBar);
             Controls.Add(header);
 
-            var footer = new Panel { Dock = DockStyle.Bottom, Height = 68, BackColor = Color.White, Padding = new Padding(16, 14, 16, 14) };
+            var footer = new Panel { Dock = DockStyle.Bottom, Height = 68, BackColor = Color.White, Padding = new Padding(20, 12, 20, 12) };
             footer.Controls.Add(new Panel { Dock = DockStyle.Top, Height = 1, BackColor = ModuleBorder });
-            var clear = new Button { Text = "ล้างข้อมูลหมวดนี้", Width = 150, Dock = DockStyle.Left, BackColor = Color.White, FlatStyle = FlatStyle.Flat };
-            clear.FlatAppearance.BorderColor = ModuleBorder;
+            var clear = CreateSecondaryButton("ล้างข้อมูลหมวดนี้", new Point(20, 12), new Size(145, 42));
+            clear.Dock = DockStyle.Left;
             clear.Click += delegate { ClearCurrentSection(); };
             footer.Controls.Add(clear);
-            var generate = new Button { Text = "ตรวจสอบและสร้างเอกสาร", Width = 200, Dock = DockStyle.Right, BackColor = ModuleAccent, ForeColor = Color.White, FlatStyle = FlatStyle.Flat };
-            generate.FlatAppearance.BorderSize = 0;
+            var generate = CreatePrimaryButton("ตรวจสอบและสร้างเอกสาร", new Point(0, 12), new Size(206, 42));
+            generate.Dock = DockStyle.Right;
             generate.Click += delegate { GenerateDocuments(); };
             footer.Controls.Add(generate);
-            var newEmployee = new Button { Text = "เพิ่มลูกจ้างใหม่", Width = 140, Dock = DockStyle.Right, BackColor = Color.White, FlatStyle = FlatStyle.Flat };
-            newEmployee.FlatAppearance.BorderColor = ModuleBorder;
+            var newEmployee = CreateSecondaryButton("เพิ่มลูกจ้างใหม่", new Point(0, 12), new Size(145, 42));
+            newEmployee.Dock = DockStyle.Right;
             newEmployee.Click += delegate { AddNewEmployee(); };
             footer.Controls.Add(newEmployee);
-            var load = new Button { Text = "โหลด Template", Width = 125, Dock = DockStyle.Right, BackColor = Color.White, FlatStyle = FlatStyle.Flat };
-            load.FlatAppearance.BorderColor = ModuleBorder;
+            var load = CreateSecondaryButton("โหลด Template", new Point(0, 12), new Size(125, 42));
+            load.Dock = DockStyle.Right;
             load.Click += delegate { LoadTemplate(); };
             footer.Controls.Add(load);
-            var save = new Button { Text = "บันทึก Template", Width = 135, Dock = DockStyle.Right, BackColor = Color.White, FlatStyle = FlatStyle.Flat };
-            save.FlatAppearance.BorderColor = ModuleBorder;
+            var save = CreateSecondaryButton("บันทึก Template", new Point(0, 12), new Size(135, 42));
+            save.Dock = DockStyle.Right;
             save.Click += delegate { SaveCurrentTemplate(); };
             footer.Controls.Add(save);
             Controls.Add(footer);
 
             var body = new Panel { Dock = DockStyle.Fill, BackColor = ModuleBackground };
-            var navigation = new Panel { Dock = DockStyle.Left, Width = 230, BackColor = Color.White, Padding = new Padding(16, 24, 12, 12) };
-            var navigationTitle = new Label { Text = "ขั้นตอนการกรอกข้อมูล", Dock = DockStyle.Top, Height = 30, Font = new Font("Tahoma", 11f, FontStyle.Bold), ForeColor = Color.FromArgb(30, 45, 65) };
-            var navigationHint = new Label { Text = "เลือกหมวดเพื่อแก้ไขข้อมูล", Dock = DockStyle.Top, Height = 30, ForeColor = Color.FromArgb(80, 95, 115) };
-            sectionList = new ListBox { Dock = DockStyle.Fill, BorderStyle = BorderStyle.None, BackColor = Color.White, Font = new Font("Tahoma", 10.5f), IntegralHeight = false, DrawMode = DrawMode.OwnerDrawFixed, ItemHeight = 42 };
+            var navigation = new Panel { Dock = DockStyle.Left, Width = 350, BackColor = Color.White, BorderStyle = BorderStyle.FixedSingle, Padding = new Padding(20, 16, 16, 16) };
+            var navigationTitle = new Label { Text = "ขั้นตอนการกรอกข้อมูล", Dock = DockStyle.Top, Height = 30, Font = new Font("Segoe UI", 10.5f, FontStyle.Bold), ForeColor = Navy };
+            var navigationHint = new Label { Text = "เลือกหมวดเพื่อแก้ไขข้อมูล", Dock = DockStyle.Top, Height = 30, ForeColor = MutedText, Font = new Font("Segoe UI", 9.5f) };
+            sectionList = new ListBox { Dock = DockStyle.Fill, BorderStyle = BorderStyle.None, BackColor = Color.White, Font = new Font("Segoe UI", 10.0f), IntegralHeight = false, DrawMode = DrawMode.OwnerDrawFixed, ItemHeight = 42 };
             sectionList.Items.AddRange(new object[] { "1  ข้อมูลโรงเรียน", "2  กรรมการ TOR", "3  ข้อมูลลูกจ้าง", "4  สรุปชุดเอกสารที่ต้องการสร้าง" });
             sectionList.SelectedIndexChanged += delegate { ShowSection(sectionList.SelectedIndex); };
             sectionList.DrawItem += DrawSectionItem;
@@ -246,7 +289,7 @@ namespace ReimbursementDocApp
             navigation.Controls.Add(navigationHint);
             navigation.Controls.Add(navigationTitle);
 
-            contentHost = new Panel { Dock = DockStyle.Fill, AutoScroll = true, BackColor = ModuleBackground, Padding = new Padding(16, 20, 16, 14) };
+            contentHost = new Panel { Dock = DockStyle.Fill, AutoScroll = true, BackColor = ModuleBackground, Padding = new Padding(16, 16, 20, 14) };
             for (var i = 0; i < 4; i++)
             {
                 var panel = new Panel { Dock = DockStyle.Fill, AutoScroll = true, BackColor = Color.White, BorderStyle = BorderStyle.FixedSingle, Visible = false };
@@ -268,7 +311,7 @@ namespace ReimbursementDocApp
             if (e.Index < 0 || e.Index >= sectionList.Items.Count) return;
             var selected = (e.State & DrawItemState.Selected) == DrawItemState.Selected;
             var background = selected ? ModuleAccentLight : Color.White;
-            var foreground = selected ? ModuleAccentDark : Color.FromArgb(45, 55, 72);
+            var foreground = selected ? ModuleAccentDark : TextColor;
             var bounds = new Rectangle(e.Bounds.Left + 10, e.Bounds.Top, e.Bounds.Width - 18, e.Bounds.Height);
             using (var backgroundBrush = new SolidBrush(background))
             {
@@ -387,19 +430,19 @@ namespace ReimbursementDocApp
         private void AddZoneHeading(Control parent, string title, int y)
         {
             parent.Controls.Add(new Panel { Location = new Point(24, y), Size = new Size(680, 1), BackColor = ModuleBorder });
-            parent.Controls.Add(new Label { Text = title, Font = new Font("Tahoma", 11f, FontStyle.Bold), Location = new Point(24, y + 8), Size = new Size(680, 22), ForeColor = ModuleAccentDark });
+            parent.Controls.Add(new Label { Text = title, Font = new Font("Segoe UI", 10.5f, FontStyle.Bold), Location = new Point(24, y + 8), Size = new Size(680, 22), ForeColor = ModuleAccentDark });
         }
 
         private void AddHeading(Panel parent, string title, string hint)
         {
-            parent.Controls.Add(new Label { Text = title, Font = new Font("Tahoma", 14f, FontStyle.Bold), Location = new Point(24, 14), Size = new Size(680, 30), ForeColor = Color.FromArgb(31, 41, 55) });
-            parent.Controls.Add(new Label { Text = hint, Location = new Point(24, 46), Size = new Size(680, 24), ForeColor = Color.FromArgb(80, 95, 115) });
+            parent.Controls.Add(new Label { Text = title, Font = new Font("Segoe UI", 15f, FontStyle.Bold), Location = new Point(24, 14), Size = new Size(680, 30), ForeColor = TextColor });
+            parent.Controls.Add(new Label { Text = hint, Font = new Font("Segoe UI", 9.5f), Location = new Point(24, 46), Size = new Size(680, 24), ForeColor = MutedText });
             parent.Controls.Add(new Panel { Location = new Point(24, 76), Size = new Size(680, 2), BackColor = ModuleAccent });
         }
 
         private TextBox AddText(Control parent, string label, string key, int x, int y, int width)
         {
-            parent.Controls.Add(new Label { Text = label, Location = new Point(x, y), Size = new Size(width, 20), ForeColor = Color.FromArgb(31, 41, 55) });
+            parent.Controls.Add(new Label { Text = label, Font = new Font("Segoe UI", 9.5f, FontStyle.Bold), Location = new Point(x, y), Size = new Size(width, 20), ForeColor = TextColor });
             var box = new TextBox { Location = new Point(x, y + 24), Size = new Size(width, 26), BorderStyle = BorderStyle.FixedSingle, BackColor = Color.White };
             box.TextChanged += delegate { OnUiChanged(); };
             parent.Controls.Add(box);
@@ -409,7 +452,7 @@ namespace ReimbursementDocApp
 
         private Label AddReadOnlyValue(Control parent, string label, int x, int y, int width)
         {
-            parent.Controls.Add(new Label { Text = label, Location = new Point(x, y), Size = new Size(width, 20), ForeColor = Color.FromArgb(31, 41, 55) });
+            parent.Controls.Add(new Label { Text = label, Font = new Font("Segoe UI", 9.5f, FontStyle.Bold), Location = new Point(x, y), Size = new Size(width, 20), ForeColor = TextColor });
             var value = new Label { Location = new Point(x, y + 24), Size = new Size(width, 26), BorderStyle = BorderStyle.FixedSingle, BackColor = ModuleAccentLight, ForeColor = ModuleAccentDark, TextAlign = ContentAlignment.MiddleLeft, Padding = new Padding(6, 0, 0, 0) };
             parent.Controls.Add(value);
             return value;
@@ -417,7 +460,7 @@ namespace ReimbursementDocApp
 
         private ComboBox AddCombo(Control parent, string label, string key, int x, int y, int width)
         {
-            parent.Controls.Add(new Label { Text = label, Location = new Point(x, y), Size = new Size(width, 20), ForeColor = Color.FromArgb(31, 41, 55) });
+            parent.Controls.Add(new Label { Text = label, Font = new Font("Segoe UI", 9.5f, FontStyle.Bold), Location = new Point(x, y), Size = new Size(width, 20), ForeColor = TextColor });
             var box = new ComboBox { Location = new Point(x, y + 24), Size = new Size(width, 26), DropDownStyle = ComboBoxStyle.DropDownList, BackColor = Color.White };
             box.SelectedIndexChanged += delegate { OnUiChanged(); };
             parent.Controls.Add(box);
@@ -436,7 +479,7 @@ namespace ReimbursementDocApp
         private void AddPersonFields(Control parent, string title, string prefix, int y)
         {
             parent.Controls.Add(new Panel { Location = new Point(24, y - 10), Size = new Size(680, 1), BackColor = ModuleBorder });
-            parent.Controls.Add(new Label { Text = title, Font = new Font("Tahoma", 10.5f, FontStyle.Bold), Location = new Point(24, y), Size = new Size(680, 20), ForeColor = ModuleAccentDark });
+            parent.Controls.Add(new Label { Text = title, Font = new Font("Segoe UI", 10f, FontStyle.Bold), Location = new Point(24, y), Size = new Size(680, 20), ForeColor = ModuleAccentDark });
             var prefixBox = AddEditableCombo(parent, "คำนำหน้า", prefix + ".prefix", 24, y + 24, 150);
             prefixBox.Items.AddRange(new object[] { UnspecifiedOption, "นาย", "นาง", "นางสาว", "ว่าที่ร้อยตรี", "......(กรอกเอง)" });
             AddText(parent, "ชื่อ", prefix + ".given", 194, y + 24, 250);
@@ -448,8 +491,8 @@ namespace ReimbursementDocApp
             var prefix = "committee." + index;
             var group = new Panel { Location = new Point(16, y - 8), Size = new Size(700, 154), BackColor = Color.FromArgb(250, 253, 251), BorderStyle = BorderStyle.FixedSingle, TabStop = false };
             parent.Controls.Add(group);
-            group.Controls.Add(new Panel { Location = new Point(12, 8), Size = new Size(674, 2), BackColor = ModuleAccent });
-            group.Controls.Add(new Label { Text = title, Font = new Font("Tahoma", 10.5f, FontStyle.Bold), Location = new Point(12, 16), Size = new Size(674, 20), ForeColor = ModuleAccentDark });
+            group.Controls.Add(new Panel { Location = new Point(0, 0), Size = new Size(5, 36), BackColor = ModuleAccent });
+            group.Controls.Add(new Label { Text = title, Font = new Font("Segoe UI", 10f, FontStyle.Bold), Location = new Point(5, 0), Size = new Size(689, 36), BackColor = Color.FromArgb(248, 250, 252), ForeColor = TextColor, TextAlign = ContentAlignment.MiddleLeft, Padding = new Padding(12, 0, 0, 0) });
             var prefixBox = AddEditableCombo(group, "คำนำหน้า", prefix + ".prefix", 12, 42, 150);
             prefixBox.Items.AddRange(new object[] { UnspecifiedOption, "นาย", "นาง", "นางสาว", "ว่าที่ร้อยตรี", "......(กรอกเอง)" });
             AddText(group, "ชื่อ", prefix + ".given", 182, 42, 220);
