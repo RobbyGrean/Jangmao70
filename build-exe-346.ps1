@@ -7,6 +7,7 @@ $sourceFiles = @(
     (Join-Path $PSScriptRoot 'ReimbursementDocApp346.cs'),
     (Join-Path $PSScriptRoot 'Shared\Document346Core.cs'),
     (Join-Path $PSScriptRoot 'Shared\Document346Config.cs'),
+    (Join-Path $PSScriptRoot 'Shared\TemplateTransfer.cs'),
     (Join-Path $PSScriptRoot 'Shared\DocxRenderer.cs'),
     (Join-Path $PSScriptRoot 'Modules\Procurement\ProcurementModule.cs'),
     (Join-Path $PSScriptRoot 'Document346Shell.cs')

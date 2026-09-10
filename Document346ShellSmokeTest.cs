@@ -29,6 +29,9 @@ namespace ReimbursementDocApp
                     if (sectionList.Items[1].ToString() != "2  กรรมการ TOR" || sectionList.Items[2].ToString() != "3  ข้อมูลลูกจ้าง" || sectionList.Items[3].ToString() != "4  สรุปชุดเอกสารที่ต้องการสร้าง") throw new InvalidOperationException("Procurement zone labels do not match the current UX decision.");
                     var procurementFields = GetField<Dictionary<string, Control>>(procurement, "fields");
                     if (procurementFields == null || !procurementFields.ContainsKey("procurement.specificationOrder")) throw new InvalidOperationException("TOR appointment order field is missing from the Procurement form.");
+                    if (procurementFields.ContainsKey("school.finance")) throw new InvalidOperationException("Finance officer fields must not be rendered in Procurement.");
+                    var procurementFooter = procurement.Controls.OfType<Panel>().FirstOrDefault(x => x.Dock == DockStyle.Bottom);
+                    if (procurementFooter == null || !procurementFooter.Controls.OfType<Button>().Any(x => x.Text == "นำเข้า Template")) throw new InvalidOperationException("Procurement must expose the cross-program Template import action.");
                     var districtBox = GetField<ComboBox>(procurement, "districtBox");
                     if (districtBox == null || districtBox.DropDownStyle != ComboBoxStyle.DropDown || districtBox.Items.Count != 1 || districtBox.Items[0].ToString() != "สำนักงานเขตพื้นที่การศึกษาประถมศึกษาแม่ฮ่องสอน เขต 2") throw new InvalidOperationException("Procurement must keep only the Mae Hong Son District 2 preset while allowing users to type another district.");
                     var sectionPanels = GetField<List<Panel>>(procurement, "sectionPanels");
@@ -82,6 +85,13 @@ namespace ReimbursementDocApp
                     orderYear.SelectedIndex = -1;
                     Invoke(payrollForm, "ApplyOrderDateInputs");
                     if (fields["{วันที่สั่งจ้าง}"].Text != "") throw new InvalidOperationException("Clearing the Payroll order date must keep its tag blank.");
+
+                    var transferData = new Dictionary<string, string> { { "{ชื่อโรงเรียน}", "Source School" }, { "{ชื่อลูกจ้าง}", "Source Employee" } };
+                    var transfer = TemplateTransferService.FromPayroll("source", "Source Template", "", "", "", "", "", transferData);
+                    var imported = TemplateTransferService.GetImportableValues(transfer);
+                    if (!imported.ContainsKey("school.name") || imported["school.name"] != "Source School" || !imported.ContainsKey("employee.given") || imported["employee.given"] != "Source Employee") throw new InvalidOperationException("Cross-program Template mapping did not preserve shared fields.");
+                    var transferReport = TemplateTransferService.BuildReport(transfer, DocumentModule.Procurement);
+                    if (transferReport.Unavailable.Count == 0) throw new InvalidOperationException("Cross-program import report must identify source fields that are unavailable.");
                 }
                 Console.WriteLine("PASS: shell has independent Payroll + Procurement tabs, blank Payroll order date, and no unused total-salary fields");
                 return 0;

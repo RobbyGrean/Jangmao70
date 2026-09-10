@@ -7,6 +7,7 @@ $sourceFiles = @(
     (Join-Path $root 'ReimbursementDocApp346.cs'),
     (Join-Path $root 'Shared\Document346Core.cs'),
     (Join-Path $root 'Shared\Document346Config.cs'),
+    (Join-Path $root 'Shared\TemplateTransfer.cs'),
     (Join-Path $root 'Shared\DocxRenderer.cs'),
     (Join-Path $root 'Modules\Procurement\ProcurementModule.cs'),
     (Join-Path $root 'Document346Shell.cs'),

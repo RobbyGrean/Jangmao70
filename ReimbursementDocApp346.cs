@@ -114,7 +114,7 @@ namespace ReimbursementDocApp
             private readonly List<PositionOption> schoolPositions = new List<PositionOption>();
             private readonly List<SavedTemplateRecord> savedTemplates = new List<SavedTemplateRecord>();
             // Only the template selected by the quick-load action advances after a successful generation.
-            private SavedTemplateRecord quickLoadedTemplate;
+            private SavedTemplateRecord activeTemplate;
             private ComboBox positionBox;
             private TextBox salaryBox;
             private TextBox salaryTextBox;
@@ -937,69 +937,91 @@ namespace ReimbursementDocApp
                 return false;
             }
 
-            private void SaveTemplateFlow()
+            private bool SaveTemplateFlow()
             {
                 using (var modeDialog = new TemplateSaveModeDialog())
                 {
-                    if (modeDialog.ShowDialog(this) != DialogResult.OK) return;
+                    if (modeDialog.ShowDialog(this) != DialogResult.OK) return false;
                     if (modeDialog.SaveMode == TemplateSaveMode.SaveNew)
                     {
-                        SaveTemplateAsNew();
+                        return SaveTemplateAsNew();
                     }
-                    else
-                    {
-                        OverwriteExistingTemplate();
-                    }
+                    return OverwriteExistingTemplate();
                 }
             }
 
-            private void SaveTemplateAsNew()
+            public bool SaveDraftForExit()
+            {
+                var data = CaptureFormData();
+                if (activeTemplate == null) return SaveTemplateFlow();
+
+                activeTemplate.Data = data.ToDictionary();
+                activeTemplate.UpdatedAt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss");
+                try
+                {
+                    SaveSavedTemplates();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("บันทึกข้อมูลก่อนปิดไม่สำเร็จ: " + ex.Message, "บันทึกข้อมูล", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return false;
+                }
+            }
+
+            private bool SaveTemplateAsNew()
             {
                 using (var editor = new TemplateEditorDialog("บันทึกเป็น Template", "", ""))
                 {
-                    if (editor.ShowDialog(this) != DialogResult.OK) return;
+                    if (editor.ShowDialog(this) != DialogResult.OK) return false;
                     if (savedTemplates.Any(x => string.Equals(x.Name, editor.TemplateName, StringComparison.OrdinalIgnoreCase)))
                     {
                         MessageBox.Show("มีชื่อ Template นี้แล้ว กรุณาใช้ชื่ออื่น", "ชื่อซ้ำ", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return;
+                        return false;
                     }
 
                     var now = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss");
                     var data = CaptureFormData();
-                    savedTemplates.Add(new SavedTemplateRecord
+                    var saved = new SavedTemplateRecord
                     {
                         Id = Guid.NewGuid().ToString("N"),
                         Name = editor.TemplateName,
                         Note = editor.TemplateNote,
                         CreatedAt = now,
                         UpdatedAt = now,
-                        LastGeneratedFiscalMonth = data.FiscalMonth,
-                        LastGeneratedFiscalYear = data.FiscalYear,
+                        LastGeneratedFiscalMonth = "",
+                        LastGeneratedFiscalYear = "",
+                        LastGeneratedAt = "",
                         Data = data.ToDictionary()
-                    });
+                    };
+                    savedTemplates.Add(saved);
+                    activeTemplate = saved;
                     SaveSavedTemplates();
                     MessageBox.Show("บันทึก Template แล้ว", "สำเร็จ", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return true;
                 }
             }
 
-            private void OverwriteExistingTemplate()
+            private bool OverwriteExistingTemplate()
             {
                 if (!savedTemplates.Any())
                 {
                     MessageBox.Show("ยังไม่มี Template ให้บันทึกทับ", "ยังไม่มี Template", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    return;
+                    return false;
                 }
 
                 using (var picker = new TemplatePickerDialog(savedTemplates, "เลือก Template ที่ต้องการบันทึกทับ", true))
                 {
-                    if (picker.ShowDialog(this) != DialogResult.OK || picker.SelectedTemplate == null) return;
-                    if (MessageBox.Show("ยืนยันการบันทึกทับ Template \"" + picker.SelectedTemplate.Name + "\" ?", "ยืนยัน", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
+                    if (picker.ShowDialog(this) != DialogResult.OK || picker.SelectedTemplate == null) return false;
+                    if (MessageBox.Show("ยืนยันการบันทึกทับ Template \"" + picker.SelectedTemplate.Name + "\" ?", "ยืนยัน", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return false;
 
                     picker.SelectedTemplate.Note = picker.SelectedTemplate.Note;
                     picker.SelectedTemplate.UpdatedAt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss");
                     picker.SelectedTemplate.Data = CaptureFormData().ToDictionary();
+                    activeTemplate = picker.SelectedTemplate;
                     SaveSavedTemplates();
                     MessageBox.Show("บันทึกทับ Template แล้ว", "สำเร็จ", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return true;
                 }
             }
 
@@ -1015,17 +1037,26 @@ namespace ReimbursementDocApp
                 {
                     if (picker.ShowDialog(this) != DialogResult.OK || picker.SelectedTemplate == null) return;
 
+                    var selectedTemplate = picker.SelectedTemplate;
+                    if (!HasGeneratedPeriod(selectedTemplate))
+                    {
+                        activeTemplate = selectedTemplate;
+                        ApplyTemplateData(TemplateFormData.FromDictionary(selectedTemplate.Data), false);
+                        MessageBox.Show("โหลด Template แล้ว แต่ยังไม่มีประวัติการพิมพ์สำเร็จ จึงยังไม่เลื่อนเดือนไปข้างหน้า กรุณาเลือกเดือนเองก่อนสร้างเอกสาร", "ยังไม่มีประวัติการเบิก", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        return;
+                    }
+
                     string nextMonth;
                     int nextYear;
-                    GetNextPeriodForQuickLoad(picker.SelectedTemplate, out nextMonth, out nextYear);
+                    GetNextPeriodForQuickLoad(selectedTemplate, out nextMonth, out nextYear);
                     using (var confirmation = new QuickLoadConfirmationDialog(nextMonth, nextYear))
                     {
                         if (confirmation.ShowDialog(this) != DialogResult.OK) return;
                     }
 
-                    ApplyTemplateData(TemplateFormData.FromDictionary(picker.SelectedTemplate.Data), true);
-                    ApplyLastGeneratedPeriodForQuickLoad(picker.SelectedTemplate);
-                    quickLoadedTemplate = picker.SelectedTemplate;
+                    activeTemplate = selectedTemplate;
+                    ApplyTemplateData(TemplateFormData.FromDictionary(selectedTemplate.Data), true);
+                    ApplyLastGeneratedPeriodForQuickLoad(selectedTemplate);
                     AdvanceMonthForQuickLoad();
                     var payDateMissing = string.IsNullOrWhiteSpace(GetControlValue(fieldBoxes[TagPayDate]));
                     MessageBox.Show(
@@ -1040,17 +1071,141 @@ namespace ReimbursementDocApp
 
             private void OpenTemplateManager()
             {
-                quickLoadedTemplate = null;
+                activeTemplate = null;
                 using (var manager = new TemplateManagerDialog(savedTemplates))
                 {
                     var result = manager.ShowDialog(this);
                     if (manager.IsDirty) SaveSavedTemplates();
                     if (result == DialogResult.OK && manager.SelectedTemplate != null)
                     {
+                        activeTemplate = manager.SelectedTemplate;
                         ApplyTemplateData(TemplateFormData.FromDictionary(manager.SelectedTemplate.Data), false);
                         MessageBox.Show("โหลด Template แล้ว", "สำเร็จ", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
+            }
+
+            private void ImportTemplateFlow()
+            {
+                var payrollTemplates = savedTemplates.Select(ToTransferTemplate).ToList();
+                var procurementTemplates = TemplateTransferService.LoadProcurementTemplates();
+                if (procurementTemplates.Count == 0 && payrollTemplates.Count == 0)
+                {
+                    MessageBox.Show("ยังไม่มี Template ให้เลือกนำเข้า", "นำเข้า Template", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                using (var picker = new CrossTemplatePickerDialog(DocumentModule.Payroll, procurementTemplates, payrollTemplates))
+                {
+                    if (picker.ShowDialog(this) != DialogResult.OK || picker.Selected == null) return;
+                    var selected = picker.Selected;
+                    if (selected.SourceModule == DocumentModule.Payroll)
+                    {
+                        var local = savedTemplates.FirstOrDefault(x => x.Id == selected.Id);
+                        if (local == null) return;
+                        activeTemplate = local;
+                        ApplyTemplateData(TemplateFormData.FromDictionary(local.Data), false);
+                        MessageBox.Show("โหลด Template เบิกเงินเดือนแล้ว", "สำเร็จ", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        return;
+                    }
+
+                    var report = TemplateTransferService.BuildReport(selected, DocumentModule.Payroll);
+                    using (var notice = new CrossTemplateImportNoticeDialog(selected, DocumentModule.Payroll, report))
+                    {
+                        if (notice.ShowDialog(this) != DialogResult.OK) return;
+                    }
+                    ApplyImportedPayrollValues(selected);
+                    MessageBox.Show("นำเข้าข้อมูลร่วมจาก Template จัดซื้อจัดจ้างฯ แล้ว และเขียนทับข้อมูลร่วมทั้งหมดตามรายการ", "นำเข้า Template สำเร็จ", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+
+            private TemplateTransferItem ToTransferTemplate(SavedTemplateRecord template)
+            {
+                return TemplateTransferService.FromPayroll(
+                    template.Id,
+                    template.Name,
+                    template.Note,
+                    template.UpdatedAt,
+                    template.LastGeneratedFiscalMonth,
+                    template.LastGeneratedFiscalYear,
+                    template.LastGeneratedAt,
+                    template.Data);
+            }
+
+            private void ApplyImportedPayrollValues(TemplateTransferItem item)
+            {
+                var values = TemplateTransferService.GetImportableValues(item);
+                if (values.Count == 0)
+                {
+                    MessageBox.Show("Template ต้นทางไม่มีข้อมูลร่วมที่นำเข้าได้", "นำเข้า Template", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                suppressMonthGuideReset = true;
+                try
+                {
+                    ApplyImportedPayrollField(values, "school.name", TagSchoolName);
+                    ApplyImportedPayrollField(values, "school.district", TagDistrictName);
+                    ApplyImportedPayrollPerson(values, "school.director", "ผอ");
+                    ApplyImportedPayrollPerson(values, "school.supply", "พัสดุ");
+                    ApplyImportedPayrollPerson(values, "school.headSupply", "หพัสดุ");
+                    ApplyImportedPayrollField(values, "employee.prefix", "{คำนำหน้าลูกจ้าง}");
+                    ApplyImportedPayrollField(values, "employee.given", "{ชื่อลูกจ้าง}");
+                    ApplyImportedPayrollField(values, "employee.surname", "{นามสกุลลูกจ้าง}");
+                    ApplyImportedPayrollField(values, "employee.nationalId", "{เลขประจำตัว}");
+                    ApplyImportedPayrollField(values, "employee.birth.day", "{เกิดวันที่}");
+                    ApplyImportedPayrollField(values, "employee.birth.month", "{เดือนเกิด}");
+                    ApplyImportedPayrollField(values, "employee.birth.year", "{ปีเกิด}");
+                    ApplyImportedPayrollField(values, "employee.age", "{อายุลูกจ้าง}");
+                    ApplyImportedPayrollField(values, "employee.nationality", "{สัญชาติ}");
+                    ApplyImportedPayrollField(values, "employee.race", "{เชื้อชาติ}");
+                    ApplyImportedPayrollField(values, "employee.religion", "{ศาสนา}");
+                    ApplyImportedPayrollField(values, "employee.idIssueDistrict", "{ออกอำเภอ}");
+                    ApplyImportedPayrollField(values, "employee.idIssueProvince", "{ออกจังหวัด}");
+                    ApplyImportedPayrollField(values, "employee.idIssue.day", "{วันที่ออกบัตร}");
+                    ApplyImportedPayrollField(values, "employee.idIssue.month", "{เดือนออกบัตร}");
+                    ApplyImportedPayrollField(values, "employee.idIssue.year", "{ปีออกบัตร}");
+                    ApplyImportedPayrollField(values, "employee.idExpiry.day", "{วันบัตรหมดอายุ}");
+                    ApplyImportedPayrollField(values, "employee.idExpiry.month", "{เดือนบัตรหมดอายุ}");
+                    ApplyImportedPayrollField(values, "employee.idExpiry.year", "{ปีบัตรหมดอายุ}");
+                    ApplyImportedPayrollField(values, "employee.educationLevel", "{สำเร็จการศึกษาระดับ}");
+                    ApplyImportedPayrollField(values, "employee.qualification", "{คุณวุฒิการศึกษา}");
+                    ApplyImportedPayrollField(values, "employee.houseNumber", "{บ้านเลขที่ลูกจ้าง}");
+                    ApplyImportedPayrollField(values, "employee.road", "{ถนนลูกจ้าง}");
+                    ApplyImportedPayrollField(values, "employee.subdistrict", "{ตำบลลูกจ้าง}");
+                    ApplyImportedPayrollField(values, "employee.district", "{อำเภอลูกจ้าง}");
+                    ApplyImportedPayrollField(values, "employee.province", "{จังหวัดลูกจ้าง}");
+                    ApplyFiscalValues();
+                    NormalizeLiveFieldsAfterApply();
+                }
+                finally
+                {
+                    suppressMonthGuideReset = false;
+                    ResetMonthGuide();
+                }
+                activeTemplate = null;
+            }
+
+            private void ApplyImportedPayrollPerson(Dictionary<string, string> values, string key, string suffix)
+            {
+                ApplyImportedPayrollField(values, key + ".prefix", "{คำนำหน้า" + suffix + "}");
+                ApplyImportedPayrollField(values, key + ".given", "{ชื่อ" + suffix + "}");
+                ApplyImportedPayrollField(values, key + ".surname", "{นามสกุล" + suffix + "}");
+            }
+
+            private void ApplyImportedPayrollField(Dictionary<string, string> values, string key, string tag)
+            {
+                string value;
+                if (!values.TryGetValue(key, out value)) return;
+                Control control;
+                if (!fieldBoxes.TryGetValue(tag, out control)) return;
+                var combo = control as ComboBox;
+                if (combo != null)
+                {
+                    if (!SelectComboText(combo, value)) combo.SelectedIndex = combo.Items.Count > 0 ? 0 : -1;
+                    return;
+                }
+                control.Text = value ?? "";
             }
 
             private void HighlightMonthGuide()
@@ -1105,15 +1260,9 @@ namespace ReimbursementDocApp
             {
                 if (template == null) return;
 
-                // Old templates do not yet have this metadata. Their saved period is the safe migration fallback.
                 var month = template.LastGeneratedFiscalMonth;
                 var year = template.LastGeneratedFiscalYear;
-                if (string.IsNullOrWhiteSpace(month) || string.IsNullOrWhiteSpace(year))
-                {
-                    var savedData = TemplateFormData.FromDictionary(template.Data);
-                    month = savedData.FiscalMonth;
-                    year = savedData.FiscalYear;
-                }
+                if (string.IsNullOrWhiteSpace(month) || string.IsNullOrWhiteSpace(year)) return;
 
                 suppressMonthGuideReset = true;
                 try
@@ -1136,39 +1285,46 @@ namespace ReimbursementDocApp
             {
                 var month = template == null ? "" : template.LastGeneratedFiscalMonth;
                 var year = template == null ? "" : template.LastGeneratedFiscalYear;
-                if (string.IsNullOrWhiteSpace(month) || string.IsNullOrWhiteSpace(year))
-                {
-                    var savedData = TemplateFormData.FromDictionary(template.Data);
-                    month = savedData.FiscalMonth;
-                    year = savedData.FiscalYear;
-                }
 
                 var monthNumber = GetMonthNumber(month);
-                if (monthNumber == 0) monthNumber = DateTime.Today.Month;
                 int parsedYear;
-                if (!int.TryParse(year, out parsedYear)) parsedYear = DateTime.Today.Year + 543;
+                if (monthNumber == 0 || !int.TryParse(year, out parsedYear))
+                {
+                    nextMonth = "";
+                    nextYear = 0;
+                    return;
+                }
 
                 var nextMonthNumber = monthNumber == 12 ? 1 : monthNumber + 1;
                 nextMonth = ThaiMonths[nextMonthNumber];
                 nextYear = parsedYear + (monthNumber == 12 ? 1 : 0);
             }
 
+            private bool HasGeneratedPeriod(SavedTemplateRecord template)
+            {
+                int year;
+                return template != null
+                    && !string.IsNullOrWhiteSpace(template.LastGeneratedAt)
+                    && GetMonthNumber(template.LastGeneratedFiscalMonth) > 0
+                    && int.TryParse(template.LastGeneratedFiscalYear, out year);
+            }
+
             private void UpdateQuickLoadedTemplatePeriodAfterGenerate()
             {
-                if (quickLoadedTemplate == null) return;
+                if (activeTemplate == null) return;
 
                 var month = fiscalMonthBox.SelectedItem == null ? "" : fiscalMonthBox.SelectedItem.ToString();
                 var year = (int)fiscalYearBox.Value;
-                var savedMonthNumber = GetMonthNumber(quickLoadedTemplate.LastGeneratedFiscalMonth);
+                var savedMonthNumber = GetMonthNumber(activeTemplate.LastGeneratedFiscalMonth);
                 int savedYear;
-                int.TryParse(quickLoadedTemplate.LastGeneratedFiscalYear, out savedYear);
+                int.TryParse(activeTemplate.LastGeneratedFiscalYear, out savedYear);
                 var currentMonthNumber = GetMonthNumber(month);
                 if (savedMonthNumber > 0 && savedYear > 0 && currentMonthNumber > 0
                     && (year < savedYear || (year == savedYear && currentMonthNumber < savedMonthNumber))) return;
 
-                quickLoadedTemplate.LastGeneratedFiscalMonth = month;
-                quickLoadedTemplate.LastGeneratedFiscalYear = year.ToString();
-                quickLoadedTemplate.LastGeneratedAt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss");
+                activeTemplate.LastGeneratedFiscalMonth = month;
+                activeTemplate.LastGeneratedFiscalYear = year.ToString();
+                activeTemplate.LastGeneratedAt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss");
                 SaveSavedTemplates();
             }
 
@@ -1194,23 +1350,28 @@ namespace ReimbursementDocApp
                     using (var pen = new Pen(Border)) e.Graphics.DrawLine(pen, 0, 0, actionBar.Width, 0);
                 };
 
-                var hint = new Label { Text = "ตรวจงวดและปีงบประมาณก่อนสร้างทุกครั้ง", Location = new Point(20, 23), Size = new Size(315, 24), ForeColor = MutedText, Font = new Font("Segoe UI", 9.5f, FontStyle.Regular) };
+                var hint = new Label { Text = "ตรวจงวด/ปีก่อนสร้างเอกสาร", Location = new Point(20, 23), Size = new Size(190, 24), ForeColor = MutedText, Font = new Font("Segoe UI", 9.5f, FontStyle.Regular) };
                 actionBar.Controls.Add(hint);
 
-                var manageButton = CreateSecondaryButton("จัดการ Template", new Point(actionBar.Width - 758, 12), new Size(145, 42));
+                var manageButton = CreateSecondaryButton("จัดการ Template", new Point(actionBar.Width - 880, 12), new Size(145, 42));
                 manageButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
                 manageButton.Click += delegate { OpenTemplateManager(); };
                 actionBar.Controls.Add(manageButton);
 
-                var saveButton = CreateSecondaryButton("บันทึกเป็น Template", new Point(actionBar.Width - 603, 12), new Size(145, 42));
+                var saveButton = CreateSecondaryButton("บันทึกเป็น Template", new Point(actionBar.Width - 731, 12), new Size(145, 42));
                 saveButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
                 saveButton.Click += delegate { SaveTemplateFlow(); };
                 actionBar.Controls.Add(saveButton);
 
-                var quickLoadButton = CreateSecondaryButton("เหมือนเดิม! แค่เปลี่ยนเดือน!", new Point(actionBar.Width - 448, 12), new Size(208, 42));
+                var quickLoadButton = CreateSecondaryButton("เหมือนเดิม! แค่เปลี่ยนเดือน!", new Point(actionBar.Width - 582, 12), new Size(208, 42));
                 quickLoadButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
                 quickLoadButton.Click += delegate { QuickLoadTemplateFlow(); };
                 actionBar.Controls.Add(quickLoadButton);
+
+                var importButton = CreateSecondaryButton("นำเข้า Template", new Point(actionBar.Width - 370, 12), new Size(140, 42));
+                importButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+                importButton.Click += delegate { ImportTemplateFlow(); };
+                actionBar.Controls.Add(importButton);
 
                 var button = CreatePrimaryButton("ตรวจสอบและสร้าง Word", new Point(actionBar.Width - 226, 12), new Size(206, 42));
                 button.Anchor = AnchorStyles.Top | AnchorStyles.Right;

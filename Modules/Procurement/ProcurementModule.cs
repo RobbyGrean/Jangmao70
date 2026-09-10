@@ -103,7 +103,6 @@ namespace ReimbursementDocApp
                 SetPerson("school.director", record.School.Director);
                 SetPerson("school.supply", record.School.SupplyOfficer);
                 SetPerson("school.headSupply", record.School.HeadSupplyOfficer);
-                SetPerson("school.finance", record.School.FinanceOfficer);
                 Set("employee.prefix", record.Employee.Prefix);
                 Set("employee.given", record.Employee.GivenName);
                 Set("employee.surname", record.Employee.Surname);
@@ -266,6 +265,10 @@ namespace ReimbursementDocApp
             newEmployee.Dock = DockStyle.Right;
             newEmployee.Click += delegate { AddNewEmployee(); };
             footer.Controls.Add(newEmployee);
+            var import = CreateSecondaryButton("นำเข้า Template", new Point(0, 12), new Size(140, 42));
+            import.Dock = DockStyle.Right;
+            import.Click += delegate { ImportTemplate(); };
+            footer.Controls.Add(import);
             var load = CreateSecondaryButton("โหลด Template", new Point(0, 12), new Size(125, 42));
             load.Dock = DockStyle.Right;
             load.Click += delegate { LoadTemplate(); };
@@ -345,7 +348,6 @@ namespace ReimbursementDocApp
             AddPersonFields(parent, "ผู้อำนวยการโรงเรียน", "school.director", 224);
             AddPersonFields(parent, "เจ้าหน้าที่พัสดุ", "school.supply", 344);
             AddPersonFields(parent, "หัวหน้าเจ้าหน้าที่พัสดุ", "school.headSupply", 464);
-            AddPersonFields(parent, "เจ้าหน้าที่การเงิน", "school.finance", 584);
         }
 
         private void BuildCommitteeSection(Panel parent)
@@ -568,7 +570,6 @@ namespace ReimbursementDocApp
             record.School.Director = ReadPerson("school.director");
             record.School.SupplyOfficer = ReadPerson("school.supply");
             record.School.HeadSupplyOfficer = ReadPerson("school.headSupply");
-            record.School.FinanceOfficer = ReadPerson("school.finance");
             record.Employee.Prefix = Read("employee.prefix");
             record.Employee.GivenName = Read("employee.given");
             record.Employee.Surname = Read("employee.surname");
@@ -650,7 +651,6 @@ namespace ReimbursementDocApp
                 SetPerson("school.director", record.School.Director);
                 SetPerson("school.supply", record.School.SupplyOfficer);
                 SetPerson("school.headSupply", record.School.HeadSupplyOfficer);
-                SetPerson("school.finance", record.School.FinanceOfficer);
                 Set("employee.prefix", record.Employee.Prefix);
                 Set("employee.given", record.Employee.GivenName);
                 Set("employee.surname", record.Employee.Surname);
@@ -820,7 +820,7 @@ namespace ReimbursementDocApp
             for (var i = 0; i < candidate.Committee.Length; i++)
             {
                 var member = candidate.Committee[i];
-                if (member == null || string.IsNullOrWhiteSpace(member.Prefix) || string.IsNullOrWhiteSpace(member.GivenName) || string.IsNullOrWhiteSpace(member.Surname) || string.IsNullOrWhiteSpace(member.Position)) errors.Add("กรรมการ " + (char)('A' + i));
+                if (member == null || string.IsNullOrWhiteSpace(member.Prefix) || string.IsNullOrWhiteSpace(member.GivenName) || string.IsNullOrWhiteSpace(member.Surname) || string.IsNullOrWhiteSpace(member.Position)) errors.Add("กรรมการ " + (i + 1));
             }
             return errors;
         }
@@ -1043,6 +1043,116 @@ namespace ReimbursementDocApp
             if (sharedChanged != null) sharedChanged();
         }
 
+        private void ImportTemplate()
+        {
+            var procurementTemplates = (storeData.Templates ?? new List<SavedTemplateSnapshot>())
+                .Select(TemplateTransferService.FromProcurement)
+                .Where(x => !string.IsNullOrWhiteSpace(x.Name))
+                .ToList();
+            var payrollTemplates = TemplateTransferService.LoadPayrollTemplates();
+            if (procurementTemplates.Count == 0 && payrollTemplates.Count == 0)
+            {
+                MessageBox.Show("ยังไม่มี Template ให้เลือกนำเข้า", "นำเข้า Template", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            using (var picker = new CrossTemplatePickerDialog(DocumentModule.Procurement, procurementTemplates, payrollTemplates))
+            {
+                if (picker.ShowDialog(this) != DialogResult.OK || picker.Selected == null) return;
+                var selected = picker.Selected;
+                if (selected.SourceModule == DocumentModule.Procurement)
+                {
+                    var local = (storeData.Templates ?? new List<SavedTemplateSnapshot>()).FirstOrDefault(x => x.Id == selected.Id);
+                    if (local == null) return;
+                    ApplyLoadedRecord(store.Clone(local.Record));
+                    MessageBox.Show("โหลด Template จัดซื้อจัดจ้างฯ แล้ว", "สำเร็จ", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                var report = TemplateTransferService.BuildReport(selected, DocumentModule.Procurement);
+                using (var notice = new CrossTemplateImportNoticeDialog(selected, DocumentModule.Procurement, report))
+                {
+                    if (notice.ShowDialog(this) != DialogResult.OK) return;
+                }
+                ApplyImportedProcurementValues(selected);
+                MessageBox.Show("นำเข้าข้อมูลร่วมจาก Template เบิกเงินเดือนแล้ว และเขียนทับข้อมูลร่วมทั้งหมดตามรายการ", "นำเข้า Template สำเร็จ", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void ApplyLoadedRecord(WorkingRecord loaded)
+        {
+            if (loaded == null) return;
+            record.RecordId = loaded.RecordId;
+            record.School = loaded.School;
+            record.Employee = loaded.Employee;
+            record.Committee = loaded.Committee;
+            record.Payroll = loaded.Payroll;
+            record.Procurement = loaded.Procurement;
+            RefreshFromRecord();
+            isDirty = false;
+            if (sharedChanged != null) sharedChanged();
+        }
+
+        private void ApplyImportedProcurementValues(TemplateTransferItem item)
+        {
+            var values = TemplateTransferService.GetImportableValues(item);
+            if (values.Count == 0)
+            {
+                MessageBox.Show("Template ต้นทางไม่มีข้อมูลร่วมที่นำเข้าได้", "นำเข้า Template", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            string value;
+            if (values.TryGetValue("school.name", out value)) record.School.Name = value;
+            if (values.TryGetValue("school.district", out value)) record.School.District = value;
+            if (record.School.Director == null) record.School.Director = new PersonRecord();
+            if (record.School.SupplyOfficer == null) record.School.SupplyOfficer = new PersonRecord();
+            if (record.School.HeadSupplyOfficer == null) record.School.HeadSupplyOfficer = new PersonRecord();
+            ApplyImportedPerson(values, "school.director", record.School.Director);
+            ApplyImportedPerson(values, "school.supply", record.School.SupplyOfficer);
+            ApplyImportedPerson(values, "school.headSupply", record.School.HeadSupplyOfficer);
+
+            if (values.TryGetValue("employee.prefix", out value)) record.Employee.Prefix = value;
+            if (values.TryGetValue("employee.given", out value)) record.Employee.GivenName = value;
+            if (values.TryGetValue("employee.surname", out value)) record.Employee.Surname = value;
+            if (values.TryGetValue("employee.nationalId", out value)) record.Employee.NationalId = value;
+            if (values.TryGetValue("employee.birth.day", out value)) record.Employee.BirthDay = value;
+            if (values.TryGetValue("employee.birth.month", out value)) record.Employee.BirthMonth = value;
+            if (values.TryGetValue("employee.birth.year", out value)) record.Employee.BirthYear = value;
+            if (values.TryGetValue("employee.age", out value)) record.Employee.Age = value;
+            if (values.TryGetValue("employee.nationality", out value)) record.Employee.Nationality = value;
+            if (values.TryGetValue("employee.race", out value)) record.Employee.Race = value;
+            if (values.TryGetValue("employee.religion", out value)) record.Employee.Religion = value;
+            if (values.TryGetValue("employee.idIssueDistrict", out value)) record.Employee.IdIssueDistrict = value;
+            if (values.TryGetValue("employee.idIssueProvince", out value)) record.Employee.IdIssueProvince = value;
+            if (values.TryGetValue("employee.idIssue.day", out value)) record.Employee.IdIssueDay = value;
+            if (values.TryGetValue("employee.idIssue.month", out value)) record.Employee.IdIssueMonth = value;
+            if (values.TryGetValue("employee.idIssue.year", out value)) record.Employee.IdIssueYear = value;
+            if (values.TryGetValue("employee.idExpiry.day", out value)) record.Employee.IdExpiryDay = value;
+            if (values.TryGetValue("employee.idExpiry.month", out value)) record.Employee.IdExpiryMonth = value;
+            if (values.TryGetValue("employee.idExpiry.year", out value)) record.Employee.IdExpiryYear = value;
+            if (values.TryGetValue("employee.educationLevel", out value)) record.Employee.EducationLevel = value;
+            if (values.TryGetValue("employee.qualification", out value)) record.Employee.Qualification = value;
+            if (values.TryGetValue("employee.houseNumber", out value)) record.Employee.HouseNumber = value;
+            if (values.TryGetValue("employee.road", out value)) record.Employee.Road = value;
+            if (values.TryGetValue("employee.subdistrict", out value)) record.Employee.Subdistrict = value;
+            if (values.TryGetValue("employee.district", out value)) record.Employee.District = value;
+            if (values.TryGetValue("employee.province", out value)) record.Employee.Province = value;
+
+            RefreshFromRecord();
+            isDirty = true;
+            if (sharedChanged != null) sharedChanged();
+        }
+
+        private void ApplyImportedPerson(Dictionary<string, string> values, string key, PersonRecord target)
+        {
+            if (target == null) return;
+            string value;
+            if (values.TryGetValue(key + ".prefix", out value)) target.Prefix = value;
+            if (values.TryGetValue(key + ".given", out value)) target.GivenName = value;
+            if (values.TryGetValue(key + ".surname", out value)) target.Surname = value;
+        }
+
         private void LoadTemplate()
         {
             if (storeData.Templates == null || storeData.Templates.Count == 0)
@@ -1053,16 +1163,7 @@ namespace ReimbursementDocApp
             using (var picker = new ProcurementTemplatePickerDialog(storeData.Templates))
             {
                 if (picker.ShowDialog(this) != DialogResult.OK || picker.Selected == null) return;
-                var loaded = store.Clone(picker.Selected.Record);
-                record.RecordId = loaded.RecordId;
-                record.School = loaded.School;
-                record.Employee = loaded.Employee;
-                record.Committee = loaded.Committee;
-                record.Payroll = loaded.Payroll;
-                record.Procurement = loaded.Procurement;
-                RefreshFromRecord();
-                isDirty = false;
-                if (sharedChanged != null) sharedChanged();
+                ApplyLoadedRecord(store.Clone(picker.Selected.Record));
                 MessageBox.Show("นำข้อมูล Template มาใช้ในฟอร์มแล้ว การแก้ไขจะไม่เปลี่ยนข้อมูลที่บันทึกไว้จนกว่าจะสั่งบันทึกทับ", "โหลด Template", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }

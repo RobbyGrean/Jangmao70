@@ -134,7 +134,6 @@ namespace ReimbursementDocApp
         public PersonRecord Director { get; set; }
         public PersonRecord SupplyOfficer { get; set; }
         public PersonRecord HeadSupplyOfficer { get; set; }
-        public PersonRecord FinanceOfficer { get; set; }
 
         public SchoolRecord()
         {
@@ -143,7 +142,6 @@ namespace ReimbursementDocApp
             Director = new PersonRecord();
             SupplyOfficer = new PersonRecord();
             HeadSupplyOfficer = new PersonRecord();
-            FinanceOfficer = new PersonRecord();
         }
     }
 

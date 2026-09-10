@@ -105,7 +105,9 @@ namespace ReimbursementDocApp
         private void HandleFormClosing(object sender, FormClosingEventArgs e)
         {
             if (closingConfirmed || procurementModule == null) return;
-            if (!procurementModule.HasMeaningfulData() && !HasPayrollMeaningfulData()) return;
+            var procurementHasData = procurementModule.HasMeaningfulData();
+            var payrollHasData = HasPayrollMeaningfulData();
+            if (!procurementHasData && !payrollHasData) return;
             var choice = MessageBox.Show("มีข้อมูลที่ยังไม่ได้บันทึก ต้องการบันทึกก่อนปิดหรือไม่?\nใช่ = บันทึก, ไม่ใช่ = ไม่บันทึก, ยกเลิกหรือกากบาท = กลับไปทำงาน", "ปิด Jangmao70", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
             if (choice == DialogResult.Cancel)
             {
@@ -114,14 +116,45 @@ namespace ReimbursementDocApp
             }
             if (choice == DialogResult.Yes)
             {
-                var result = procurementModule.SaveCurrentTemplate();
-                if (result != TemplateOperationResult.Saved)
+                if (payrollHasData && !SavePayrollDraftForExit())
                 {
                     e.Cancel = true;
                     return;
                 }
+                if (procurementHasData)
+                {
+                    var result = procurementModule.SaveCurrentTemplate();
+                    if (result != TemplateOperationResult.Saved)
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
+                }
             }
             closingConfirmed = true;
+        }
+
+        private bool SavePayrollDraftForExit()
+        {
+            if (payrollForm == null) return true;
+            var method = payrollForm.GetType().GetMethod("SaveDraftForExit", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            if (method == null) return true;
+            try
+            {
+                var result = method.Invoke(payrollForm, null);
+                return !(result is bool) || (bool)result;
+            }
+            catch (TargetInvocationException ex)
+            {
+                var message = ex.InnerException == null ? ex.Message : ex.InnerException.Message;
+                MessageBox.Show("บันทึกข้อมูลเบิกเงินเดือนก่อนปิดไม่สำเร็จ: " + message, "บันทึกข้อมูล", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("บันทึกข้อมูลเบิกเงินเดือนก่อนปิดไม่สำเร็จ: " + ex.Message, "บันทึกข้อมูล", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
         }
 
         private bool HasPayrollMeaningfulData()
