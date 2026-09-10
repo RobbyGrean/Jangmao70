@@ -244,10 +244,10 @@ namespace ReimbursementDocApp
 
         private void BuildShell()
         {
-            var header = new Panel { Dock = DockStyle.Top, Height = 76, BackColor = Navy, Padding = new Padding(24, 12, 24, 10) };
-            var accentBar = new Panel { Dock = DockStyle.Left, Width = 5, BackColor = ModuleAccent };
+            var header = new Panel { Dock = DockStyle.Top, Height = 76, BackColor = ModuleAccent, Padding = new Padding(24, 12, 24, 10) };
+            var accentBar = new Panel { Dock = DockStyle.Left, Width = 5, BackColor = Color.FromArgb(185, 230, 204) };
             var title = new Label { Text = "Jangmao70  |  จัดซื้อจัดจ้างและสัญญา", Font = new Font("Segoe UI", 17f, FontStyle.Bold), ForeColor = Color.White, Dock = DockStyle.Left, Width = 520, TextAlign = ContentAlignment.MiddleLeft, Padding = new Padding(12, 0, 0, 0) };
-            var subtitle = new Label { Text = "สร้างเอกสารจากแม่แบบที่ตรวจสอบแล้ว — ทำงานแบบออฟไลน์และเก็บข้อมูลไว้ในเครื่อง", Font = new Font("Segoe UI", 9.5f), ForeColor = Color.FromArgb(213, 229, 240), TextAlign = ContentAlignment.MiddleRight, Dock = DockStyle.Fill };
+            var subtitle = new Label { Text = "สร้างเอกสารจากแม่แบบที่ตรวจสอบแล้ว — ทำงานแบบออฟไลน์และเก็บข้อมูลไว้ในเครื่อง", Font = new Font("Segoe UI", 9.5f), ForeColor = Color.FromArgb(240, 250, 244), TextAlign = ContentAlignment.MiddleRight, Dock = DockStyle.Fill };
             header.Controls.Add(subtitle);
             header.Controls.Add(title);
             header.Controls.Add(accentBar);
@@ -289,7 +289,7 @@ namespace ReimbursementDocApp
             navigation.Controls.Add(navigationHint);
             navigation.Controls.Add(navigationTitle);
 
-            contentHost = new Panel { Dock = DockStyle.Fill, AutoScroll = true, BackColor = ModuleBackground, Padding = new Padding(16, 16, 20, 14) };
+            contentHost = new Panel { Dock = DockStyle.Fill, AutoScroll = false, BackColor = ModuleBackground, Padding = new Padding(16, 16, 20, 14) };
             for (var i = 0; i < 4; i++)
             {
                 var panel = new Panel { Dock = DockStyle.Fill, AutoScroll = true, BackColor = Color.White, BorderStyle = BorderStyle.FixedSingle, Visible = false };
@@ -436,7 +436,9 @@ namespace ReimbursementDocApp
         private void AddHeading(Panel parent, string title, string hint)
         {
             parent.Controls.Add(new Label { Text = title, Font = new Font("Segoe UI", 15f, FontStyle.Bold), Location = new Point(24, 14), Size = new Size(680, 30), ForeColor = TextColor });
-            parent.Controls.Add(new Label { Text = hint, Font = new Font("Segoe UI", 9.5f), Location = new Point(24, 46), Size = new Size(680, 24), ForeColor = MutedText });
+            var hintBox = new Panel { Location = new Point(24, 44), Size = new Size(680, 28), BackColor = ModuleAccentLight, BorderStyle = BorderStyle.FixedSingle };
+            hintBox.Controls.Add(new Label { Text = hint, Font = new Font("Segoe UI", 8.5f), Location = new Point(9, 3), Size = new Size(658, 20), ForeColor = ModuleAccentDark, AutoEllipsis = true, TextAlign = ContentAlignment.MiddleLeft });
+            parent.Controls.Add(hintBox);
             parent.Controls.Add(new Panel { Location = new Point(24, 76), Size = new Size(680, 2), BackColor = ModuleAccent });
         }
 
