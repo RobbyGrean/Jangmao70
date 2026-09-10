@@ -31,7 +31,7 @@ namespace ReimbursementDocApp
                     if (procurementFields == null || !procurementFields.ContainsKey("procurement.specificationOrder")) throw new InvalidOperationException("TOR appointment order field is missing from the Procurement form.");
                     if (procurementFields.ContainsKey("school.finance")) throw new InvalidOperationException("Finance officer fields must not be rendered in Procurement.");
                     var procurementFooter = procurement.Controls.OfType<Panel>().FirstOrDefault(x => x.Dock == DockStyle.Bottom);
-                    if (procurementFooter == null || !procurementFooter.Controls.OfType<Button>().Any(x => x.Text == "นำเข้า Template")) throw new InvalidOperationException("Procurement must expose the cross-program Template import action.");
+                    if (procurementFooter == null || !procurementFooter.Controls.OfType<Button>().Any(x => x.Text == "โหลด Template")) throw new InvalidOperationException("Procurement must expose the unified cross-program Template load action.");
                     var districtBox = GetField<ComboBox>(procurement, "districtBox");
                     if (districtBox == null || districtBox.DropDownStyle != ComboBoxStyle.DropDown || districtBox.Items.Count != 1 || districtBox.Items[0].ToString() != "สำนักงานเขตพื้นที่การศึกษาประถมศึกษาแม่ฮ่องสอน เขต 2") throw new InvalidOperationException("Procurement must keep only the Mae Hong Son District 2 preset while allowing users to type another district.");
                     var sectionPanels = GetField<List<Panel>>(procurement, "sectionPanels");

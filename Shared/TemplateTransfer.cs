@@ -51,7 +51,7 @@ namespace ReimbursementDocApp
             AppendList(builder, Imported, "  ");
             if (Imported.Count == 0) builder.AppendLine("  - ไม่มีข้อมูลร่วมที่กรอกไว้");
             builder.AppendLine();
-            builder.AppendLine("ข้อมูลจากต้นทางที่ไม่นำเข้า:");
+            builder.AppendLine("ข้อมูลจากต้นทางที่ไม่โหลดเข้าฟอร์มนี้:");
             AppendList(builder, Ignored, "  ");
             if (Ignored.Count == 0) builder.AppendLine("  - ไม่มี");
             builder.AppendLine();
@@ -441,7 +441,6 @@ namespace ReimbursementDocApp
 
     internal sealed class CrossTemplatePickerDialog : Form
     {
-        private readonly DocumentModule targetModule;
         private readonly ListBox currentList = new ListBox();
         private readonly ListBox otherList = new ListBox();
         private readonly Label preview = new Label();
@@ -450,7 +449,6 @@ namespace ReimbursementDocApp
 
         public CrossTemplatePickerDialog(DocumentModule target, IEnumerable<TemplateTransferItem> procurementTemplates, IEnumerable<TemplateTransferItem> payrollTemplates)
         {
-            targetModule = target;
             Text = "โหลด Template : เลือกจากโปรแกรม";
             FormBorderStyle = FormBorderStyle.FixedDialog;
             StartPosition = FormStartPosition.CenterParent;
@@ -464,8 +462,8 @@ namespace ReimbursementDocApp
             Controls.Add(new Label { Text = "โหลด Template", Font = new Font("Segoe UI", 16f, FontStyle.Bold), ForeColor = Color.FromArgb(30, 41, 59), Location = new Point(20, 16), Size = new Size(300, 32) });
             Controls.Add(new Label { Text = "เลือกข้อมูลเดิมจากโปรแกรมใดก็ได้", ForeColor = Color.FromArgb(100, 116, 139), Location = new Point(22, 48), Size = new Size(500, 22) });
 
-            BuildListCard(currentList, "จัดซื้อจัดจ้างและสัญญา", Color.FromArgb(15, 118, 110), new Point(20, 82), procurementTemplates);
-            BuildListCard(otherList, "เบิกเงินเดือน", Color.FromArgb(31, 94, 140), new Point(460, 82), payrollTemplates);
+            BuildListCard(currentList, "นำเข้าจากชุดจัดซื้อจัดจ้างและสัญญา", Color.FromArgb(15, 118, 110), new Point(20, 82), procurementTemplates);
+            BuildListCard(otherList, "โหลดจากข้อมูลเบิกเงินเดือนเดิม", Color.FromArgb(31, 94, 140), new Point(460, 82), payrollTemplates);
             currentList.SelectedIndexChanged += delegate { if (currentList.SelectedIndex >= 0) otherList.ClearSelected(); UpdatePreview(); };
             otherList.SelectedIndexChanged += delegate { if (otherList.SelectedIndex >= 0) currentList.ClearSelected(); UpdatePreview(); };
 
@@ -512,12 +510,12 @@ namespace ReimbursementDocApp
             var item = GetSelected();
             if (item == null)
             {
-                preview.Text = "เลือก Template เพื่อดูหมายเหตุและขอบเขตข้อมูลที่จะนำเข้า";
+                preview.Text = "เลือก Template เพื่อดูหมายเหตุและขอบเขตข้อมูลที่จะโหลด";
                 useButton.Text = "เลือก Template";
                 return;
             }
             preview.Text = item.SourceLabel + "  |  " + (string.IsNullOrWhiteSpace(item.Note) ? "ไม่มีหมายเหตุ" : item.Note);
-            useButton.Text = item.SourceModule == targetModule ? "โหลด Template" : "นำเข้า Template";
+            useButton.Text = "โหลด Template";
         }
 
         private TemplateTransferItem GetSelected()
@@ -542,7 +540,7 @@ namespace ReimbursementDocApp
     {
         public CrossTemplateImportNoticeDialog(TemplateTransferItem item, DocumentModule target, TemplateImportReport report)
         {
-            Text = "ตรวจสอบการนำเข้า Template";
+            Text = "ตรวจสอบการโหลด Template";
             FormBorderStyle = FormBorderStyle.FixedDialog;
             StartPosition = FormStartPosition.CenterParent;
             MinimizeBox = false;
@@ -555,7 +553,7 @@ namespace ReimbursementDocApp
             Controls.Add(new Label { Text = "Template: " + item.Name, ForeColor = Color.FromArgb(100, 116, 139), Location = new Point(22, 50), Size = new Size(700, 22) });
             var details = new TextBox { Location = new Point(20, 82), Size = new Size(720, 420), Multiline = true, ReadOnly = true, ScrollBars = ScrollBars.Vertical, BorderStyle = BorderStyle.FixedSingle, BackColor = Color.White, Text = report.ToDisplayText(item, target) };
             Controls.Add(details);
-            var ok = new Button { Text = "นำเข้าและเขียนทับ", Location = new Point(540, 528), Size = new Size(130, 32), BackColor = target == DocumentModule.Payroll ? Color.FromArgb(31, 94, 140) : Color.FromArgb(15, 118, 110), ForeColor = Color.White, FlatStyle = FlatStyle.Flat };
+            var ok = new Button { Text = "โหลดและเขียนทับ", Location = new Point(540, 528), Size = new Size(130, 32), BackColor = target == DocumentModule.Payroll ? Color.FromArgb(31, 94, 140) : Color.FromArgb(15, 118, 110), ForeColor = Color.White, FlatStyle = FlatStyle.Flat };
             ok.FlatAppearance.BorderSize = 0;
             ok.Click += delegate { DialogResult = DialogResult.OK; Close(); };
             Controls.Add(ok);

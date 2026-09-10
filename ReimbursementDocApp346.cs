@@ -1085,13 +1085,13 @@ namespace ReimbursementDocApp
                 }
             }
 
-            private void ImportTemplateFlow()
+            private void LoadTemplateFlow()
             {
                 var payrollTemplates = savedTemplates.Select(ToTransferTemplate).ToList();
                 var procurementTemplates = TemplateTransferService.LoadProcurementTemplates();
                 if (procurementTemplates.Count == 0 && payrollTemplates.Count == 0)
                 {
-                    MessageBox.Show("ยังไม่มี Template ให้เลือกนำเข้า", "นำเข้า Template", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("ยังไม่มี Template ให้เลือกโหลด", "โหลด Template", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
 
@@ -1115,7 +1115,7 @@ namespace ReimbursementDocApp
                         if (notice.ShowDialog(this) != DialogResult.OK) return;
                     }
                     ApplyImportedPayrollValues(selected);
-                    MessageBox.Show("นำเข้าข้อมูลร่วมจาก Template จัดซื้อจัดจ้างฯ แล้ว และเขียนทับข้อมูลร่วมทั้งหมดตามรายการ", "นำเข้า Template สำเร็จ", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("โหลดข้อมูลร่วมจาก Template จัดซื้อจัดจ้างฯ แล้ว และเขียนทับข้อมูลร่วมทั้งหมดตามรายการ", "โหลด Template สำเร็จ", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
 
@@ -1137,7 +1137,7 @@ namespace ReimbursementDocApp
                 var values = TemplateTransferService.GetImportableValues(item);
                 if (values.Count == 0)
                 {
-                    MessageBox.Show("Template ต้นทางไม่มีข้อมูลร่วมที่นำเข้าได้", "นำเข้า Template", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Template ต้นทางไม่มีข้อมูลร่วมที่โหลดได้", "โหลด Template", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
 
@@ -1368,10 +1368,10 @@ namespace ReimbursementDocApp
                 quickLoadButton.Click += delegate { QuickLoadTemplateFlow(); };
                 actionBar.Controls.Add(quickLoadButton);
 
-                var importButton = CreateSecondaryButton("นำเข้า Template", new Point(actionBar.Width - 370, 12), new Size(140, 42));
-                importButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-                importButton.Click += delegate { ImportTemplateFlow(); };
-                actionBar.Controls.Add(importButton);
+                var loadButton = CreateSecondaryButton("โหลด Template", new Point(actionBar.Width - 370, 12), new Size(140, 42));
+                loadButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+                loadButton.Click += delegate { LoadTemplateFlow(); };
+                actionBar.Controls.Add(loadButton);
 
                 var button = CreatePrimaryButton("ตรวจสอบและสร้าง Word", new Point(actionBar.Width - 226, 12), new Size(206, 42));
                 button.Anchor = AnchorStyles.Top | AnchorStyles.Right;

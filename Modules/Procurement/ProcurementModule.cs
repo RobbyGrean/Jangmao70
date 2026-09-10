@@ -265,13 +265,9 @@ namespace ReimbursementDocApp
             newEmployee.Dock = DockStyle.Right;
             newEmployee.Click += delegate { AddNewEmployee(); };
             footer.Controls.Add(newEmployee);
-            var import = CreateSecondaryButton("นำเข้า Template", new Point(0, 12), new Size(140, 42));
-            import.Dock = DockStyle.Right;
-            import.Click += delegate { ImportTemplate(); };
-            footer.Controls.Add(import);
             var load = CreateSecondaryButton("โหลด Template", new Point(0, 12), new Size(125, 42));
             load.Dock = DockStyle.Right;
-            load.Click += delegate { LoadTemplate(); };
+            load.Click += delegate { LoadTemplateFlow(); };
             footer.Controls.Add(load);
             var save = CreateSecondaryButton("บันทึก Template", new Point(0, 12), new Size(135, 42));
             save.Dock = DockStyle.Right;
@@ -1043,7 +1039,7 @@ namespace ReimbursementDocApp
             if (sharedChanged != null) sharedChanged();
         }
 
-        private void ImportTemplate()
+        private void LoadTemplateFlow()
         {
             var procurementTemplates = (storeData.Templates ?? new List<SavedTemplateSnapshot>())
                 .Select(TemplateTransferService.FromProcurement)
@@ -1052,7 +1048,7 @@ namespace ReimbursementDocApp
             var payrollTemplates = TemplateTransferService.LoadPayrollTemplates();
             if (procurementTemplates.Count == 0 && payrollTemplates.Count == 0)
             {
-                MessageBox.Show("ยังไม่มี Template ให้เลือกนำเข้า", "นำเข้า Template", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("ยังไม่มี Template ให้เลือกโหลด", "โหลด Template", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
@@ -1075,7 +1071,7 @@ namespace ReimbursementDocApp
                     if (notice.ShowDialog(this) != DialogResult.OK) return;
                 }
                 ApplyImportedProcurementValues(selected);
-                MessageBox.Show("นำเข้าข้อมูลร่วมจาก Template เบิกเงินเดือนแล้ว และเขียนทับข้อมูลร่วมทั้งหมดตามรายการ", "นำเข้า Template สำเร็จ", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("โหลดข้อมูลร่วมจาก Template เบิกเงินเดือนแล้ว และเขียนทับข้อมูลร่วมทั้งหมดตามรายการ", "โหลด Template สำเร็จ", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
@@ -1098,7 +1094,7 @@ namespace ReimbursementDocApp
             var values = TemplateTransferService.GetImportableValues(item);
             if (values.Count == 0)
             {
-                MessageBox.Show("Template ต้นทางไม่มีข้อมูลร่วมที่นำเข้าได้", "นำเข้า Template", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Template ต้นทางไม่มีข้อมูลร่วมที่โหลดได้", "โหลด Template", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
@@ -1151,21 +1147,6 @@ namespace ReimbursementDocApp
             if (values.TryGetValue(key + ".prefix", out value)) target.Prefix = value;
             if (values.TryGetValue(key + ".given", out value)) target.GivenName = value;
             if (values.TryGetValue(key + ".surname", out value)) target.Surname = value;
-        }
-
-        private void LoadTemplate()
-        {
-            if (storeData.Templates == null || storeData.Templates.Count == 0)
-            {
-                MessageBox.Show("ยังไม่มี Template ที่บันทึกไว้", "โหลด Template", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
-            using (var picker = new ProcurementTemplatePickerDialog(storeData.Templates))
-            {
-                if (picker.ShowDialog(this) != DialogResult.OK || picker.Selected == null) return;
-                ApplyLoadedRecord(store.Clone(picker.Selected.Record));
-                MessageBox.Show("นำข้อมูล Template มาใช้ในฟอร์มแล้ว การแก้ไขจะไม่เปลี่ยนข้อมูลที่บันทึกไว้จนกว่าจะสั่งบันทึกทับ", "โหลด Template", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
         }
 
         private sealed class PositionView
