@@ -272,6 +272,10 @@ namespace Jangmao70
             save.Dock = DockStyle.Right;
             save.Click += delegate { SaveCurrentTemplate(); };
             footer.Controls.Add(save);
+            var deleteTemplate = CreateSecondaryButton("ลบ Template", new Point(0, 12), new Size(115, 42));
+            deleteTemplate.Dock = DockStyle.Right;
+            deleteTemplate.Click += delegate { DeleteTemplateFlow(); };
+            footer.Controls.Add(deleteTemplate);
 
             var body = new Panel { Dock = DockStyle.Fill, BackColor = ModuleBackground };
             var navigation = new Panel { Dock = DockStyle.Left, Width = 350, BackColor = Color.White, BorderStyle = BorderStyle.FixedSingle, Padding = new Padding(20, 16, 16, 16) };
@@ -1171,6 +1175,32 @@ namespace Jangmao70
             }
         }
 
+        private void DeleteTemplateFlow()
+        {
+            if (storeData.Templates == null || !storeData.Templates.Any(x => x != null && !string.IsNullOrWhiteSpace(x.Name)))
+            {
+                MessageBox.Show("ยังไม่มี Template ให้ลบ", "ลบ Template", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            var draft = store.Clone(storeData);
+            using (var dialog = new ProcurementTemplateDeleteDialog(draft.Templates))
+            {
+                dialog.ShowDialog(this);
+                if (!dialog.IsDirty) return;
+                try
+                {
+                    store.Save(draft);
+                    storeData = draft;
+                    MessageBox.Show("ลบ Template แล้ว", "สำเร็จ", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Jangmao70StoreException ex)
+                {
+                    MessageBox.Show(ex.Message, "ลบ Template ไม่สำเร็จ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
         private void ApplyLoadedRecord(WorkingRecord loaded)
         {
             if (loaded == null) return;
@@ -1207,6 +1237,11 @@ namespace Jangmao70
             if (values.TryGetValue("employee.prefix", out value)) record.Employee.Prefix = value;
             if (values.TryGetValue("employee.given", out value)) record.Employee.GivenName = value;
             if (values.TryGetValue("employee.surname", out value)) record.Employee.Surname = value;
+            if (values.TryGetValue("employee.position", out value))
+            {
+                var positionId = TemplateTransferService.MapPayrollPositionToProcurement(value);
+                if (!string.IsNullOrWhiteSpace(positionId)) SelectPosition(positionId);
+            }
             if (values.TryGetValue("employee.nationalId", out value)) record.Employee.NationalId = value;
             if (values.TryGetValue("employee.birth.day", out value)) record.Employee.BirthDay = value;
             if (values.TryGetValue("employee.birth.month", out value)) record.Employee.BirthMonth = value;
@@ -1230,6 +1265,11 @@ namespace Jangmao70
             if (values.TryGetValue("employee.subdistrict", out value)) record.Employee.Subdistrict = value;
             if (values.TryGetValue("employee.district", out value)) record.Employee.District = value;
             if (values.TryGetValue("employee.province", out value)) record.Employee.Province = value;
+            for (var i = 0; i < 3; i++)
+            {
+                if (record.Committee[i] == null) record.Committee[i] = new CommitteeMemberRecord();
+                ApplyImportedPerson(values, "committee." + i, record.Committee[i]);
+            }
 
             RefreshFromRecord();
             isDirty = true;
@@ -1279,22 +1319,51 @@ namespace Jangmao70
         }
     }
 
-    internal sealed class ProcurementTemplatePickerDialog : Form
+    internal sealed class ProcurementTemplateDeleteDialog : Form
     {
+        private readonly IList<SavedTemplateSnapshot> templates;
         private readonly ListBox list = new ListBox();
-        public SavedTemplateSnapshot Selected { get; private set; }
+        public bool IsDirty { get; private set; }
 
-        public ProcurementTemplatePickerDialog(IEnumerable<SavedTemplateSnapshot> templates)
+        public ProcurementTemplateDeleteDialog(IList<SavedTemplateSnapshot> templates)
         {
-            Text = "โหลด Template";
+            this.templates = templates ?? new List<SavedTemplateSnapshot>();
+            Text = "ลบ Template";
             FormBorderStyle = FormBorderStyle.FixedDialog;
             StartPosition = FormStartPosition.CenterParent;
             MinimizeBox = false; MaximizeBox = false; ClientSize = new Size(480, 330);
-            list.Location = new Point(20, 20); list.Size = new Size(440, 240); list.DisplayMember = "Name"; list.DataSource = templates.ToList(); Controls.Add(list);
-            var load = new Button { Text = "โหลด", Location = new Point(292, 280), Size = new Size(80, 30) };
-            var cancel = new Button { Text = "ยกเลิก", Location = new Point(380, 280), Size = new Size(80, 30), DialogResult = DialogResult.Cancel };
-            load.Click += delegate { Selected = list.SelectedItem as SavedTemplateSnapshot; if (Selected == null) { MessageBox.Show("กรุณาเลือกรายการ", "ยังไม่ได้เลือก", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; } DialogResult = DialogResult.OK; Close(); };
-            Controls.Add(load); Controls.Add(cancel); AcceptButton = load; CancelButton = cancel;
+            Controls.Add(new Label { Text = "เลือก Template ที่ต้องการลบ", Location = new Point(20, 16), Size = new Size(240, 20) });
+            list.Location = new Point(20, 44);
+            list.Size = new Size(440, 220);
+            list.DisplayMember = "Name";
+            Controls.Add(list);
+
+            var delete = new Button { Text = "ลบรายการที่เลือก", Location = new Point(260, 280), Size = new Size(110, 30) };
+            var cancel = new Button { Text = "ปิด", Location = new Point(380, 280), Size = new Size(80, 30), DialogResult = DialogResult.Cancel };
+            delete.Click += delegate
+            {
+                var selected = list.SelectedItem as SavedTemplateSnapshot;
+                if (selected == null)
+                {
+                    MessageBox.Show("กรุณาเลือกรายการ", "ยังไม่ได้เลือก", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                if (MessageBox.Show("ยืนยันการลบ Template \"" + selected.Name + "\" ?", "ยืนยันการลบ", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
+                templates.Remove(selected);
+                IsDirty = true;
+                RebindList();
+            };
+            Controls.Add(delete);
+            Controls.Add(cancel);
+            CancelButton = cancel;
+            RebindList();
+        }
+
+        private void RebindList()
+        {
+            list.DataSource = null;
+            list.DataSource = templates.Where(x => x != null && !string.IsNullOrWhiteSpace(x.Name)).ToList();
+            list.DisplayMember = "Name";
         }
     }
 }

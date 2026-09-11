@@ -47,6 +47,13 @@ namespace Jangmao70
         private const string DistrictOfficePrefix = "สำนักงานเขตพื้นที่การศึกษา";
         private const string DistrictNamePrefix = DistrictOfficePrefix + "ประถมศึกษา";
         private const string DefaultDistrictName = DistrictNamePrefix + "แม่ฮ่องสอน เขต 2";
+        private static readonly string[] DistrictOptions =
+        {
+            DefaultDistrictName,
+            "สำนักงานเขตพื้นที่การศึกษาประถมศึกษาประจวบคีรีขันธ์ เขต 2",
+            "สำนักงานเขตพื้นที่การศึกษาประถมศึกษาพิษณุโลก เขต 2",
+            "สำนักงานเขตพื้นที่การศึกษามัธยมศึกษากาญจนบุรี"
+        };
         private const string SavedTemplatesFileName = "saved_templates.json";
 
         [STAThread]
@@ -355,7 +362,8 @@ namespace Jangmao70
                 AddLabel(card, "ชื่อโรงเรียนที่ระบุในเอกสาร *", 22, 198, 320);
                 AddText(card, TagSchoolName, 22, 222, 320, false);
                 AddLabel(card, "ชื่อเขตพื้นที่การศึกษา *", 370, 198, 300);
-                var districtBox = AddText(card, TagDistrictName, 370, 222, 300, false);
+                var districtBox = AddEditableCombo(card, TagDistrictName, 370, 222, 300);
+                districtBox.Items.AddRange(DistrictOptions);
                 districtBox.Text = DefaultDistrictName;
 
                 AddLabel(card, "ตำแหน่งในโรงเรียน *", 22, 264, 210);
@@ -507,6 +515,15 @@ namespace Jangmao70
                 return box;
             }
 
+            private ComboBox AddEditableCombo(Control parent, string tag, int x, int y, int width)
+            {
+                var box = AddCombo(parent, x, y, width);
+                box.DropDownStyle = ComboBoxStyle.DropDown;
+                box.TextChanged += delegate { errorProvider.SetError(box, ""); };
+                fieldBoxes[FixThai(tag)] = box;
+                return box;
+            }
+
             private ComboBox AddPrefixCombo(Control parent, string tag, int x, int y, int width)
             {
                 var box = AddCombo(parent, x, y, width);
@@ -600,11 +617,15 @@ namespace Jangmao70
                 if (positionBox == null) return;
                 if (positionBox.SelectedIndex <= 0)
                 {
+                    if (salaryBox != null) salaryBox.Text = "";
+                    if (salaryTextBox != null) salaryTextBox.Text = "";
                     return;
                 }
                 var match = positionBox.SelectedItem as PositionOption;
                 if (match == null)
                 {
+                    if (salaryBox != null) salaryBox.Text = "";
+                    if (salaryTextBox != null) salaryTextBox.Text = "";
                     return;
                 }
                 salaryBox.Text = match.Salary;
@@ -960,6 +981,11 @@ namespace Jangmao70
                         return true;
                     }
                 }
+                if (combo.DropDownStyle != ComboBoxStyle.DropDownList)
+                {
+                    combo.Text = value ?? "";
+                    return !string.IsNullOrWhiteSpace(value);
+                }
                 return false;
             }
 
@@ -1181,6 +1207,10 @@ namespace Jangmao70
                     ApplyImportedPayrollField(values, "employee.prefix", "{คำนำหน้าลูกจ้าง}");
                     ApplyImportedPayrollField(values, "employee.given", "{ชื่อลูกจ้าง}");
                     ApplyImportedPayrollField(values, "employee.surname", "{นามสกุลลูกจ้าง}");
+                    ApplyImportedPayrollField(values, "employee.position", "{ตำแหน่ง}");
+                    ApplyImportedPayrollCommittee(values, 0, "{กรรมการA}");
+                    ApplyImportedPayrollCommittee(values, 1, "{กรรมการB}");
+                    ApplyImportedPayrollCommittee(values, 2, "{กรรมการC}");
                     ApplyImportedPayrollField(values, "employee.nationalId", "{เลขประจำตัว}");
                     ApplyImportedPayrollField(values, "employee.birth.day", "{เกิดวันที่}");
                     ApplyImportedPayrollField(values, "employee.birth.month", "{เดือนเกิด}");
@@ -1220,6 +1250,30 @@ namespace Jangmao70
                 ApplyImportedPayrollField(values, key + ".prefix", "{คำนำหน้า" + suffix + "}");
                 ApplyImportedPayrollField(values, key + ".given", "{ชื่อ" + suffix + "}");
                 ApplyImportedPayrollField(values, key + ".surname", "{นามสกุล" + suffix + "}");
+            }
+
+            private void ApplyImportedPayrollCommittee(Dictionary<string, string> values, int index, string tag)
+            {
+                var key = "committee." + index;
+                var hasValue = values.ContainsKey(key + ".prefix") || values.ContainsKey(key + ".given") || values.ContainsKey(key + ".surname");
+                if (!hasValue) return;
+                var fullName = GetImportedPersonName(values, key);
+                Control control;
+                if (fieldBoxes.TryGetValue(tag, out control)) control.Text = fullName;
+            }
+
+            private string GetImportedPersonName(Dictionary<string, string> values, string key)
+            {
+                string prefix;
+                string givenName;
+                string surname;
+                values.TryGetValue(key + ".prefix", out prefix);
+                values.TryGetValue(key + ".given", out givenName);
+                values.TryGetValue(key + ".surname", out surname);
+                var fullName = (prefix ?? "").Trim();
+                if (!string.IsNullOrWhiteSpace(givenName)) fullName = (fullName + " " + givenName.Trim()).Trim();
+                if (!string.IsNullOrWhiteSpace(surname)) fullName = (fullName + " " + surname.Trim()).Trim();
+                return fullName;
             }
 
             private void ApplyImportedPayrollField(Dictionary<string, string> values, string key, string tag)

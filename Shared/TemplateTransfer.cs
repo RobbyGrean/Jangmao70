@@ -79,13 +79,34 @@ namespace Jangmao70
             "school.director.prefix", "school.director.given", "school.director.surname",
             "school.supply.prefix", "school.supply.given", "school.supply.surname",
             "school.headSupply.prefix", "school.headSupply.given", "school.headSupply.surname",
-            "employee.prefix", "employee.given", "employee.surname", "employee.nationalId",
+            "employee.prefix", "employee.given", "employee.surname", "employee.position", "employee.nationalId",
             "employee.birth.day", "employee.birth.month", "employee.birth.year", "employee.age",
             "employee.nationality", "employee.race", "employee.religion",
             "employee.idIssueDistrict", "employee.idIssueProvince", "employee.idIssue.day", "employee.idIssue.month", "employee.idIssue.year",
             "employee.idExpiry.day", "employee.idExpiry.month", "employee.idExpiry.year",
             "employee.educationLevel", "employee.qualification",
-            "employee.houseNumber", "employee.road", "employee.subdistrict", "employee.district", "employee.province"
+            "employee.houseNumber", "employee.road", "employee.subdistrict", "employee.district", "employee.province",
+            "committee.0.prefix", "committee.0.given", "committee.0.surname",
+            "committee.1.prefix", "committee.1.given", "committee.1.surname",
+            "committee.2.prefix", "committee.2.given", "committee.2.surname"
+        };
+
+        private static readonly Dictionary<string, string> ProcurementPositionToPayroll = new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            { "admin-9000", "ธุรการโรงเรียน 9,000" },
+            { "admin-15000", "ธุรการโรงเรียน 15,000" },
+            { "janitor", "นักการภารโรง" },
+            { "disabled-care", "พี่เลี้ยงเด็กพิการ" },
+            { "dormitory", "ครูพักนอน" }
+        };
+
+        private static readonly Dictionary<string, string> PayrollPositionToProcurement =
+            ProcurementPositionToPayroll.ToDictionary(x => x.Value, x => x.Key, StringComparer.Ordinal);
+
+        private static readonly Dictionary<string, string> PayrollPositionAliasesToProcurement = new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            { "เจ้าหน้าที่ธุรการ 9,000", "admin-9000" },
+            { "เจ้าหน้าที่ธุรการ 15,000", "admin-15000" }
         };
 
         public static TemplateTransferItem FromPayroll(string id, string name, string note, string updatedAt, string lastMonth, string lastYear, string lastAt, Dictionary<string, string> data)
@@ -102,6 +123,9 @@ namespace Jangmao70
                 LastGeneratedAt = lastAt ?? ""
             };
             AddPayrollCommon(item, data);
+            AddPayrollCombinedPerson(item, "committee.0", data, "{กรรมการA}");
+            AddPayrollCombinedPerson(item, "committee.1", data, "{กรรมการB}");
+            AddPayrollCombinedPerson(item, "committee.2", data, "{กรรมการC}");
             Add(item.Values, "payroll.period", Get(data, "__fiscalMonth") + " " + Get(data, "__fiscalYear"));
             Add(item.Values, "payroll.orderNumber", Get(data, "{ใบสั่งจ้าง}"));
             Add(item.Values, "payroll.orderDate", Get(data, "__orderDay") + " " + Get(data, "__orderMonth") + " " + Get(data, "__orderYear"));
@@ -130,6 +154,9 @@ namespace Jangmao70
             };
             AddProcurementCommon(item.Values, record);
             foreach (var key in CommonKeys) item.AvailableKeys.Add(key);
+            var payrollPosition = MapProcurementPositionToPayroll(record.Procurement == null ? "" : record.Procurement.PositionId);
+            Add(item.Values, "employee.position", payrollPosition);
+            if (string.IsNullOrWhiteSpace(payrollPosition)) item.AvailableKeys.Remove("employee.position");
             Add(item.Values, "procurement.position", record.Procurement == null ? "" : record.Procurement.PositionId);
             Add(item.Values, "procurement.teaching", record.Procurement != null && record.Procurement.HasTeaching ? "มีงานสอน" : "");
             Add(item.Values, "procurement.twoSchools", record.Procurement != null && record.Procurement.WorksAtTwoSchools ? "ทำงาน 2 โรงเรียน" : "");
@@ -228,6 +255,16 @@ namespace Jangmao70
                     report.Unavailable.Add(FriendlyLabel(key));
                     continue;
                 }
+                if (key == "employee.position"
+                    && target == DocumentModule.Procurement
+                    && item != null
+                    && item.SourceModule == DocumentModule.Payroll
+                    && value.Length > 0
+                    && string.IsNullOrWhiteSpace(MapPayrollPositionToProcurement(value)))
+                {
+                    report.Ignored.Add(FriendlyLabel(key) + " (" + value + " — ไม่มีรายการรองรับในจัดซื้อฯ)");
+                    continue;
+                }
                 if (value.Length == 0) report.Blank.Add(FriendlyLabel(key));
                 else report.Imported.Add(FriendlyLabel(key));
             }
@@ -251,6 +288,7 @@ namespace Jangmao70
             AddPayroll(item, "employee.prefix", data, "{คำนำหน้าลูกจ้าง}");
             AddPayroll(item, "employee.given", data, "{ชื่อลูกจ้าง}");
             AddPayroll(item, "employee.surname", data, "{นามสกุลลูกจ้าง}");
+            AddPayroll(item, "employee.position", data, "{ตำแหน่ง}");
             AddPayroll(item, "employee.nationalId", data, "{เลขประจำตัว}");
             AddPayroll(item, "employee.birth.day", data, "{เกิดวันที่}");
             AddPayroll(item, "employee.birth.month", data, "{เดือนเกิด}");
@@ -327,6 +365,54 @@ namespace Jangmao70
             AddPayroll(item, key + ".surname", data, "{นามสกุล" + suffix + "}");
         }
 
+        private static void AddPayrollCombinedPerson(TemplateTransferItem item, string key, Dictionary<string, string> data, string tag)
+        {
+            if (data == null || !data.ContainsKey(tag)) return;
+            var person = SplitPersonName(Get(data, tag));
+            Add(item.Values, key + ".prefix", person.Prefix);
+            Add(item.Values, key + ".given", person.GivenName);
+            Add(item.Values, key + ".surname", person.Surname);
+            item.AvailableKeys.Add(key + ".prefix");
+            item.AvailableKeys.Add(key + ".given");
+            item.AvailableKeys.Add(key + ".surname");
+        }
+
+        public static string MapProcurementPositionToPayroll(string positionId)
+        {
+            string label;
+            return positionId != null && ProcurementPositionToPayroll.TryGetValue(positionId, out label) ? label : "";
+        }
+
+        public static string MapPayrollPositionToProcurement(string position)
+        {
+            string positionId;
+            var cleaned = Clean(position);
+            if (PayrollPositionToProcurement.TryGetValue(cleaned, out positionId)) return positionId;
+            return PayrollPositionAliasesToProcurement.TryGetValue(cleaned, out positionId) ? positionId : "";
+        }
+
+        private static PersonParts SplitPersonName(string value)
+        {
+            var fullName = Clean(value);
+            var prefixes = new[] { "ว่าที่ร้อยตรี", "นางสาว", "ดร.", "นาย", "นาง" };
+            var prefix = prefixes.FirstOrDefault(x => fullName.StartsWith(x, StringComparison.Ordinal)) ?? "";
+            if (prefix.Length > 0) fullName = fullName.Substring(prefix.Length).TrimStart();
+            var parts = fullName.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            return new PersonParts
+            {
+                Prefix = prefix,
+                GivenName = parts.Length > 0 ? parts[0] : "",
+                Surname = parts.Length > 1 ? string.Join(" ", parts.Skip(1).ToArray()) : ""
+            };
+        }
+
+        private sealed class PersonParts
+        {
+            public string Prefix;
+            public string GivenName;
+            public string Surname;
+        }
+
         private static void AddPerson(Dictionary<string, string> values, string key, PersonRecord person)
         {
             person = person ?? new PersonRecord();
@@ -384,6 +470,7 @@ namespace Jangmao70
                 { "school.headSupply.prefix", "คำนำหน้าหัวหน้าเจ้าหน้าที่พัสดุ" },
                 { "school.headSupply.given", "ชื่อหัวหน้าเจ้าหน้าที่พัสดุ" },
                 { "school.headSupply.surname", "นามสกุลหัวหน้าเจ้าหน้าที่พัสดุ" },
+                { "employee.position", "ตำแหน่ง" },
                 { "employee.prefix", "คำนำหน้าลูกจ้าง" },
                 { "employee.given", "ชื่อลูกจ้าง" },
                 { "employee.surname", "นามสกุลลูกจ้าง" },
