@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
@@ -98,16 +97,12 @@ namespace Jangmao70
             return form;
         }
 
-        private Dictionary<string, Control> GetPayrollFieldBoxes()
-        {
-            return GetPrivateField(payrollForm, "fieldBoxes") as Dictionary<string, Control>;
-        }
         private void HandleFormClosing(object sender, FormClosingEventArgs e)
         {
             if (closingConfirmed || procurementModule == null) return;
-            var procurementHasData = procurementModule.HasMeaningfulData();
-            var payrollHasData = HasPayrollMeaningfulData();
-            if (!procurementHasData && !payrollHasData) return;
+            var procurementHasChanges = procurementModule.IsDirty;
+            var payrollHasChanges = IsPayrollDirty();
+            if (!procurementHasChanges && !payrollHasChanges) return;
             var choice = MessageBox.Show("มีข้อมูลที่ยังไม่ได้บันทึก ต้องการบันทึกก่อนปิดหรือไม่?\nใช่ = บันทึก, ไม่ใช่ = ไม่บันทึก, ยกเลิกหรือกากบาท = กลับไปทำงาน", "ปิด Jangmao70", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
             if (choice == DialogResult.Cancel)
             {
@@ -116,12 +111,12 @@ namespace Jangmao70
             }
             if (choice == DialogResult.Yes)
             {
-                if (payrollHasData && !SavePayrollDraftForExit())
+                if (payrollHasChanges && !SavePayrollDraftForExit())
                 {
                     e.Cancel = true;
                     return;
                 }
-                if (procurementHasData)
+                if (procurementHasChanges)
                 {
                     var result = procurementModule.SaveCurrentTemplate();
                     if (result != TemplateOperationResult.Saved)
@@ -132,6 +127,15 @@ namespace Jangmao70
                 }
             }
             closingConfirmed = true;
+        }
+
+        private bool IsPayrollDirty()
+        {
+            if (payrollForm == null) return false;
+            var property = payrollForm.GetType().GetProperty("IsDirty", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            if (property == null) return false;
+            var value = property.GetValue(payrollForm, null);
+            return value is bool && (bool)value;
         }
 
         private bool SavePayrollDraftForExit()
@@ -157,27 +161,11 @@ namespace Jangmao70
             }
         }
 
-        private bool HasPayrollMeaningfulData()
-        {
-            var fields = GetPayrollFieldBoxes();
-            if (fields == null) return false;
-            return !string.IsNullOrWhiteSpace(ReadField(fields, "{ชื่อลูกจ้าง}"))
-                || !string.IsNullOrWhiteSpace(ReadField(fields, "{นามสกุลลูกจ้าง}"))
-                || !string.IsNullOrWhiteSpace(ReadField(fields, "{ชื่อโรงเรียน}"))
-                || !string.IsNullOrWhiteSpace(ReadField(fields, "{ใบสั่งจ้าง}"));
-        }
-
         private static object GetPrivateField(object instance, string name)
         {
             if (instance == null) return null;
             var field = instance.GetType().GetField(name, BindingFlags.Instance | BindingFlags.NonPublic);
             return field == null ? null : field.GetValue(instance);
-        }
-
-        private static string ReadField(Dictionary<string, Control> fields, string key)
-        {
-            Control control;
-            return fields.TryGetValue(key, out control) && control != null ? (control.Text ?? "").Trim() : "";
         }
 
     }

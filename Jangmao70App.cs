@@ -124,6 +124,12 @@ namespace Jangmao70
             private ComboBox orderMonthBox;
             private ComboBox orderYearBox;
             private bool suppressMonthGuideReset;
+            private string cleanDataFingerprint = "";
+
+            public bool IsDirty
+            {
+                get { return !string.Equals(cleanDataFingerprint, GetCurrentDataFingerprint(), StringComparison.Ordinal); }
+            }
 
             public MainForm(Dictionary<string, string[]> templates)
             {
@@ -150,6 +156,7 @@ namespace Jangmao70
                 ApplyFiscalValues();
                 NormalizeControlText(this);
                 EnableDoubleBuffering(this);
+                MarkCurrentDataClean();
                 ResumeLayout(true);
             }
 
@@ -818,6 +825,24 @@ namespace Jangmao70
                 return data;
             }
 
+            private string GetCurrentDataFingerprint()
+            {
+                var data = CaptureFormData().ToDictionary();
+                var builder = new StringBuilder();
+                foreach (var item in data.OrderBy(x => x.Key, StringComparer.Ordinal))
+                {
+                    var value = item.Value ?? "";
+                    builder.Append(item.Key.Length).Append(':').Append(item.Key);
+                    builder.Append(value.Length).Append(':').Append(value).Append(';');
+                }
+                return builder.ToString();
+            }
+
+            private void MarkCurrentDataClean()
+            {
+                cleanDataFingerprint = GetCurrentDataFingerprint();
+            }
+
             private void ApplyTemplateData(TemplateFormData data, bool focusMonthAfterLoad)
             {
                 if (data == null) return;
@@ -857,6 +882,7 @@ namespace Jangmao70
 
                 if (focusMonthAfterLoad) HighlightMonthGuide();
                 else ResetMonthGuide();
+                MarkCurrentDataClean();
             }
 
             private void ApplySavedField(string key, string value)
@@ -960,6 +986,7 @@ namespace Jangmao70
                 try
                 {
                     SaveSavedTemplates();
+                    MarkCurrentDataClean();
                     return true;
                 }
                 catch (Exception ex)
@@ -997,6 +1024,7 @@ namespace Jangmao70
                     savedTemplates.Add(saved);
                     activeTemplate = saved;
                     SaveSavedTemplates();
+                    MarkCurrentDataClean();
                     MessageBox.Show("บันทึก Template แล้ว", "สำเร็จ", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return true;
                 }
@@ -1020,6 +1048,7 @@ namespace Jangmao70
                     picker.SelectedTemplate.Data = CaptureFormData().ToDictionary();
                     activeTemplate = picker.SelectedTemplate;
                     SaveSavedTemplates();
+                    MarkCurrentDataClean();
                     MessageBox.Show("บันทึกทับ Template แล้ว", "สำเร็จ", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return true;
                 }

@@ -3,14 +3,14 @@
   "module": "Procurement",
   "root": "Template/Procurement",
   "centralDocuments": [
-    { "id": "pc-1", "relativePath": "1.ขอจ้างต่อเนื่อง 630.docx", "businessTagCount": 18, "businessOccurrenceCount": 30, "sha256": "ea7f4736076f4076bdd989b0ef5ad088599246c99888c7744de6f63dd901d0e5" },
-    { "id": "pc-2-1", "relativePath": "2.1 ขอตั้งกกTOR.docx", "businessTagCount": 24, "businessOccurrenceCount": 40, "sha256": "df481edc32e9978fa13f08ce5c27670213dc865bffaf042fa9ccea7959b7aac0" },
-    { "id": "pc-2-2", "relativePath": "2.2 คำสั่งTOR.docx", "businessTagCount": 19, "businessOccurrenceCount": 28, "sha256": "a925688a8179968ef409a971d1690eaac0497ce50ad2c4980bb9a6b2a555219b" },
-    { "id": "pc-4", "relativePath": "4.รายงานผล TOR.docx", "businessTagCount": 21, "businessOccurrenceCount": 43, "sha256": "a8ace9e03c42aec580051ceffa83bf80f34453c9ef6ad9c10aa88d14d29a09a8" },
-    { "id": "pc-5", "relativePath": "5. รายงานขอจ้าง.docx", "businessTagCount": 13, "businessOccurrenceCount": 31, "sha256": "97ad5cfbf56ad3f4dadfa0f40fe7ed0aa0e4699e453551031a639d51fcbfaa68" },
-    { "id": "pc-7", "relativePath": "7. รายงานผลพิจารณา.docx", "businessTagCount": 18, "businessOccurrenceCount": 40, "sha256": "fe280a361dd4efcf5b3fbea7a11aeddb0fab5c77a47393b4b0f59d5f5ec94fe0" },
-    { "id": "pc-8", "relativePath": "8. ประกาศผู้ชนะ.docx", "businessTagCount": 10, "businessOccurrenceCount": 17, "sha256": "de3db15f4cb20b1f3f8c2f01170ff05b8035086609d10acefb796361dfe816d6" },
-    { "id": "pc-9", "relativePath": "9. ใบสั่งจ้าง.docx", "businessTagCount": 17, "businessOccurrenceCount": 44, "sha256": "5d3f44a56945b9fe1fcae55d0b78799caa5f7703fdb13e5f27299557e3378740" }
+    { "id": "pc-1", "relativePath": "1.ขอจ้างต่อเนื่อง 630.docx", "businessTagCount": 18, "businessOccurrenceCount": 30, "sha256": "d89014f9339d263471432c5c019b6a0599cbc4d41e7440bd85e3ffc25e1d918f" },
+    { "id": "pc-2-1", "relativePath": "2.1 ขอตั้งกกTOR.docx", "businessTagCount": 24, "businessOccurrenceCount": 40, "sha256": "1c4847cb438a45243e68bd6bd1ec6cf6b27a836239a093af920e118a85b0ba5b" },
+    { "id": "pc-2-2", "relativePath": "2.2 คำสั่งTOR.docx", "businessTagCount": 19, "businessOccurrenceCount": 28, "sha256": "2df96060025bde0399f52e4706c8fcd78e0825aa9b6f009e032a4b93eac6ab57" },
+    { "id": "pc-4", "relativePath": "4.รายงานผล TOR.docx", "businessTagCount": 21, "businessOccurrenceCount": 43, "sha256": "b1175a4ec0a6c7d640f4c1ec1deb0ce822e21187a081e88917023cbbdce5ac87" },
+    { "id": "pc-5", "relativePath": "5. รายงานขอจ้าง.docx", "businessTagCount": 13, "businessOccurrenceCount": 31, "sha256": "f05bae7d6811e40e8998059de56de1aba3351dfcb1f91f671ca31c8fdd2c0299" },
+    { "id": "pc-7", "relativePath": "7. รายงานผลพิจารณา.docx", "businessTagCount": 18, "businessOccurrenceCount": 40, "sha256": "f8a38d77c211e748cfdafd65bbc3d0d285b6b48c4b609b54a3ed523ef5d93cb1" },
+    { "id": "pc-8", "relativePath": "8. ประกาศผู้ชนะ.docx", "businessTagCount": 10, "businessOccurrenceCount": 17, "sha256": "9865a6c432bb1e2d76114aa7f7af894b3419c34cca58c46fcc558a9158c972e7" },
+    { "id": "pc-9", "relativePath": "9. ใบสั่งจ้าง.docx", "businessTagCount": 17, "businessOccurrenceCount": 44, "sha256": "0797312fe2fb2e643ba48f6f5166fc02eeee6f71974d892f075eb2d195f29121" }
   ],
   "routes": [
     { "id": "admin-9000-none", "positionId": "admin-9000", "hasTeaching": false, "worksAtTwoSchools": false, "tor": "3.TOR/3.1.1 TORธุรการ9000.docx", "quote": "6. ใบเสนอราคา/6.1.1 ธุรการ9000.docx", "torSha256": "c6869efdb1b30e876947c959db76d5134fa1c2971b8a3730f00d3ab7f1c154b9", "quoteSha256": "d367323a4c41e6dcd9f0a8516db65ab205594f67d6c953b9db2be41b2f05fb52" },

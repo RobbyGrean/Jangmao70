@@ -70,7 +70,12 @@ namespace Jangmao70
                 var targetFile = ResolveUnder(target, relative);
                 var targetDirectory = Path.GetDirectoryName(targetFile);
                 if (!string.IsNullOrWhiteSpace(targetDirectory)) Directory.CreateDirectory(targetDirectory);
-                if (!File.Exists(targetFile)) File.Copy(sourceFile, targetFile);
+                if (!File.Exists(targetFile)
+                    || File.GetLastWriteTimeUtc(sourceFile) > File.GetLastWriteTimeUtc(targetFile))
+                {
+                    // Ship updated official templates without overwriting a newer user-edited copy.
+                    File.Copy(sourceFile, targetFile, true);
+                }
             }
             return target;
         }

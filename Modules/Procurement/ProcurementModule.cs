@@ -74,6 +74,7 @@ namespace Jangmao70
             AutoScaleMode = AutoScaleMode.Dpi;
             manifest = LoadManifest();
             LoadCatalog();
+            Jangmao70Paths.EnsureUserTemplateRoot(DocumentModule.Procurement);
             try
             {
                 storeData = store.Load();
@@ -141,16 +142,6 @@ namespace Jangmao70
         public void MarkSharedRecordClean()
         {
             isDirty = false;
-        }
-
-        public bool HasMeaningfulData()
-        {
-            CaptureFromControls();
-            return !string.IsNullOrWhiteSpace(record.Employee.GivenName)
-                || !string.IsNullOrWhiteSpace(record.Employee.Surname)
-                || !string.IsNullOrWhiteSpace(record.Employee.NationalId)
-                || !string.IsNullOrWhiteSpace(record.School.Name)
-                || record.Procurement.SelectedDocuments.Count > 0;
         }
 
         public TemplateOperationResult SaveCurrentTemplate()
@@ -320,10 +311,21 @@ namespace Jangmao70
             {
                 e.Graphics.FillRectangle(backgroundBrush, e.Bounds);
             }
+            var complete = IsSectionComplete(e.Index);
+            var statusText = complete ? "ครบ" : "ไม่ครบ";
+            var statusColor = complete ? Color.FromArgb(22, 163, 74) : Color.FromArgb(220, 38, 38);
+            var statusBounds = new Rectangle(e.Bounds.Right - 76, e.Bounds.Top, 68, e.Bounds.Height);
             using (var font = new Font(sectionList.Font, selected ? FontStyle.Bold : FontStyle.Regular))
             using (var brush = new SolidBrush(foreground))
             {
-                e.Graphics.DrawString(sectionList.Items[e.Index].ToString(), font, brush, bounds, new StringFormat { LineAlignment = StringAlignment.Center });
+                e.Graphics.DrawString(sectionList.Items[e.Index].ToString(), font, brush, new Rectangle(bounds.Left, bounds.Top, Math.Max(1, statusBounds.Left - bounds.Left - 8), bounds.Height), new StringFormat { LineAlignment = StringAlignment.Center });
+            }
+            using (var statusBrush = new SolidBrush(statusColor))
+            using (var statusFont = new Font("Segoe UI", 8.5f, FontStyle.Bold))
+            {
+                var dot = new Rectangle(statusBounds.Left + 2, statusBounds.Top + 16, 10, 10);
+                e.Graphics.FillEllipse(statusBrush, dot);
+                e.Graphics.DrawString(statusText, statusFont, statusBrush, new Rectangle(statusBounds.Left + 16, statusBounds.Top, statusBounds.Width - 16, statusBounds.Height), new StringFormat { LineAlignment = StringAlignment.Center });
             }
             if (selected)
             {
@@ -557,7 +559,46 @@ namespace Jangmao70
             if (suppressChanges) return;
             CaptureFromControls();
             isDirty = true;
+            if (sectionList != null) sectionList.Invalidate();
             if (sharedChanged != null) sharedChanged();
+        }
+
+        private bool IsSectionComplete(int index)
+        {
+            CaptureFromControls();
+            if (index == 0)
+            {
+                return AllFieldsComplete(fields.Keys.Where(x => x.StartsWith("school.", StringComparison.Ordinal)));
+            }
+            if (index == 1)
+            {
+                return AllFieldsComplete(fields.Keys.Where(x => x.StartsWith("committee.", StringComparison.Ordinal)).Concat(new[] { "procurement.specificationOrder" }));
+            }
+            if (index == 2)
+            {
+                var keys = fields.Keys
+                    .Where(x => x.StartsWith("employee.", StringComparison.Ordinal))
+                    .Concat(new[]
+                    {
+                        "employee.birth.day", "employee.birth.month",
+                        "employee.idIssue.day", "employee.idIssue.month",
+                        "employee.idExpiry.day", "employee.idExpiry.month",
+                        "procurement.position"
+                    });
+                if (record.Procurement.WorksAtTwoSchools) keys = keys.Concat(new[] { "procurement.secondSchool" });
+                return AllFieldsComplete(keys);
+            }
+            return CurrentRoute() != null && documentChecks.Any(x => x.Checked);
+        }
+
+        private bool AllFieldsComplete(IEnumerable<string> keys)
+        {
+            return keys.All(HasValue);
+        }
+
+        private bool HasValue(string key)
+        {
+            return !string.IsNullOrWhiteSpace(Read(key));
         }
 
         private void CaptureFromControls()
@@ -687,6 +728,7 @@ namespace Jangmao70
             {
                 suppressChanges = false;
             }
+            if (sectionList != null) sectionList.Invalidate();
         }
 
         private void SetPerson(string prefix, PersonRecord person)
