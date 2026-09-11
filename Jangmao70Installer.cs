@@ -29,6 +29,9 @@ namespace Jangmao70Installer
                 var installDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), InstallRootName);
                 var installConfig = Path.Combine(installDir, "Config");
                 var installTemplate = Path.Combine(installDir, "Template");
+                var appExe = Path.Combine(installDir, "Jangmao70.exe");
+                if (!CloseRunningApplication(appExe)) return;
+
                 Directory.CreateDirectory(installDir);
                 Directory.CreateDirectory(Path.Combine(installDir, "Data"));
                 Directory.CreateDirectory(Path.Combine(installDir, "Output", "เงินเดือน"));
@@ -43,7 +46,6 @@ namespace Jangmao70Installer
                 var uninstallPayload = Path.Combine(payload, "Uninstall Jangmao70.exe");
                 if (File.Exists(uninstallPayload)) CopyFile(uninstallPayload, Path.Combine(installDir, Path.GetFileName(uninstallPayload)), true);
 
-                var appExe = Path.Combine(installDir, "Jangmao70.exe");
                 var uninstallExe = Path.Combine(installDir, "Uninstall Jangmao70.exe");
                 var desktopShortcut = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "Jangmao70.lnk");
                 CreateShortcut(desktopShortcut, appExe, installDir);
@@ -65,6 +67,59 @@ namespace Jangmao70Installer
         private static void RequireFile(string path)
         {
             if (!File.Exists(path)) throw new FileNotFoundException("ไม่พบไฟล์ใน Payload", path);
+        }
+
+        private static bool CloseRunningApplication(string appExe)
+        {
+            var processName = Path.GetFileNameWithoutExtension(appExe);
+            while (true)
+            {
+                var running = Process.GetProcessesByName(processName)
+                    .Where(x => IsTargetProcess(x, appExe))
+                    .ToList();
+                if (running.Count == 0) return true;
+
+                foreach (var process in running)
+                {
+                    try
+                    {
+                        if (!process.HasExited) process.CloseMainWindow();
+                    }
+                    catch
+                    {
+                    }
+                }
+
+                var closed = running.All(x =>
+                {
+                    try { return x.WaitForExit(5000); }
+                    catch { return true; }
+                });
+                foreach (var process in running) process.Dispose();
+                if (closed) return true;
+
+                var retry = MessageBox.Show(
+                    "กรุณาปิด Jangmao70 ก่อนติดตั้งรุ่นใหม่\nหากโปรแกรมกำลังถามให้บันทึกข้อมูล ให้จัดการหน้าต่างนั้นให้เสร็จแล้วกด Retry",
+                    "ยังปิด Jangmao70 ไม่สำเร็จ",
+                    MessageBoxButtons.RetryCancel,
+                    MessageBoxIcon.Warning);
+                if (retry != DialogResult.Retry) return false;
+            }
+        }
+
+        private static bool IsTargetProcess(Process process, string appExe)
+        {
+            try
+            {
+                return string.Equals(
+                    Path.GetFullPath(process.MainModule.FileName),
+                    Path.GetFullPath(appExe),
+                    StringComparison.OrdinalIgnoreCase);
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         private static void RequireDirectory(string path)

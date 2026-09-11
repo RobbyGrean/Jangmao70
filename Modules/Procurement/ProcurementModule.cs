@@ -24,6 +24,13 @@ namespace Jangmao70
         private const string EmptyValue = ".............";
         private const string UnspecifiedOption = "-- ไม่ระบุ --";
         private const string PositionPlaceholder = "-- เลือกตำแหน่ง --";
+        private static readonly string[] DistrictOptions =
+        {
+            DefaultDistrict,
+            "สำนักงานเขตพื้นที่การศึกษาประถมศึกษาประจวบคีรีขันธ์ เขต 2",
+            "สำนักงานเขตพื้นที่การศึกษาประถมศึกษาพิษณุโลก เขต 2",
+            "สำนักงานเขตพื้นที่การศึกษามัธยมศึกษากาญจนบุรี"
+        };
         private static readonly Color ModuleAccent = Color.FromArgb(15, 118, 110);
         private static readonly Color ModuleAccentDark = Color.FromArgb(20, 83, 45);
         private static readonly Color ModuleAccentLight = Color.FromArgb(234, 245, 238);
@@ -274,7 +281,11 @@ namespace Jangmao70
             sectionList.Items.AddRange(new object[] { "1  ข้อมูลโรงเรียน", "2  กรรมการ TOR", "3  ข้อมูลลูกจ้าง", "4  สรุปชุดเอกสารที่ต้องการสร้าง" });
             sectionList.SelectedIndexChanged += delegate { ShowSection(sectionList.SelectedIndex); };
             sectionList.DrawItem += DrawSectionItem;
+            var openOutput = CreateSecondaryButton("เปิดโฟลเดอร์เอกสารที่สร้างแล้ว", new Point(0, 0), new Size(300, 42));
+            openOutput.Dock = DockStyle.Bottom;
+            openOutput.Click += delegate { OpenOutputFolder(); };
             navigation.Controls.Add(sectionList);
+            navigation.Controls.Add(openOutput);
             navigation.Controls.Add(navigationHint);
             navigation.Controls.Add(navigationTitle);
 
@@ -311,21 +322,26 @@ namespace Jangmao70
             {
                 e.Graphics.FillRectangle(backgroundBrush, e.Bounds);
             }
-            var complete = IsSectionComplete(e.Index);
-            var statusText = complete ? "ครบ" : "ไม่ครบ";
-            var statusColor = complete ? Color.FromArgb(22, 163, 74) : Color.FromArgb(220, 38, 38);
+            var hasStatus = e.Index < 3;
             var statusBounds = new Rectangle(e.Bounds.Right - 76, e.Bounds.Top, 68, e.Bounds.Height);
             using (var font = new Font(sectionList.Font, selected ? FontStyle.Bold : FontStyle.Regular))
             using (var brush = new SolidBrush(foreground))
             {
-                e.Graphics.DrawString(sectionList.Items[e.Index].ToString(), font, brush, new Rectangle(bounds.Left, bounds.Top, Math.Max(1, statusBounds.Left - bounds.Left - 8), bounds.Height), new StringFormat { LineAlignment = StringAlignment.Center });
+                var titleRight = hasStatus ? statusBounds.Left - 8 : e.Bounds.Right - 8;
+                e.Graphics.DrawString(sectionList.Items[e.Index].ToString(), font, brush, new Rectangle(bounds.Left, bounds.Top, Math.Max(1, titleRight - bounds.Left), bounds.Height), new StringFormat { LineAlignment = StringAlignment.Center });
             }
-            using (var statusBrush = new SolidBrush(statusColor))
-            using (var statusFont = new Font("Segoe UI", 8.5f, FontStyle.Bold))
+            if (hasStatus)
             {
-                var dot = new Rectangle(statusBounds.Left + 2, statusBounds.Top + 16, 10, 10);
-                e.Graphics.FillEllipse(statusBrush, dot);
-                e.Graphics.DrawString(statusText, statusFont, statusBrush, new Rectangle(statusBounds.Left + 16, statusBounds.Top, statusBounds.Width - 16, statusBounds.Height), new StringFormat { LineAlignment = StringAlignment.Center });
+                var complete = IsSectionComplete(e.Index);
+                var statusText = complete ? "ครบ" : "ไม่ครบ";
+                var statusColor = complete ? Color.FromArgb(22, 163, 74) : Color.FromArgb(220, 38, 38);
+                using (var statusBrush = new SolidBrush(statusColor))
+                using (var statusFont = new Font("Segoe UI", 8.5f, FontStyle.Bold))
+                {
+                    var dot = new Rectangle(statusBounds.Left + 2, statusBounds.Top + 16, 10, 10);
+                    e.Graphics.FillEllipse(statusBrush, dot);
+                    e.Graphics.DrawString(statusText, statusFont, statusBrush, new Rectangle(statusBounds.Left + 16, statusBounds.Top, statusBounds.Width - 16, statusBounds.Height), new StringFormat { LineAlignment = StringAlignment.Center });
+                }
             }
             if (selected)
             {
@@ -342,8 +358,8 @@ namespace Jangmao70
             AddHeading(parent, "ข้อมูลโรงเรียนและผู้ลงนามของ record นี้", "ชื่อโรงเรียนและบุคลากรจะไม่กลายเป็นค่า global ของลูกจ้างคนอื่น");
             AddText(parent, "ชื่อโรงเรียน *", "school.name", 24, 82, 620);
             districtBox = AddEditableCombo(parent, "เขตพื้นที่การศึกษา *", "school.district", 24, 150, 620);
-            districtBox.Items.Add(DefaultDistrict);
-            districtBox.SelectedIndex = 0;
+            districtBox.Items.AddRange(DistrictOptions);
+            districtBox.Text = DefaultDistrict;
             AddPersonFields(parent, "ผู้อำนวยการโรงเรียน", "school.director", 224);
             AddPersonFields(parent, "เจ้าหน้าที่พัสดุ", "school.supply", 344);
             AddPersonFields(parent, "หัวหน้าเจ้าหน้าที่พัสดุ", "school.headSupply", 464);
@@ -429,6 +445,17 @@ namespace Jangmao70
             documentPanel = new Panel { Location = new Point(24, 96), Size = new Size(690, 560), AutoScroll = true, BorderStyle = BorderStyle.FixedSingle, BackColor = Color.White };
             parent.Controls.Add(documentPanel);
             UpdateRouteControls();
+        }
+
+        private void OpenOutputFolder()
+        {
+            var outputRoot = Jangmao70Paths.OutputRoot(DocumentModule.Procurement);
+            Directory.CreateDirectory(outputRoot);
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = outputRoot,
+                UseShellExecute = true
+            });
         }
 
         private void AddZoneHeading(Control parent, string title, int y)
@@ -588,7 +615,7 @@ namespace Jangmao70
                 if (record.Procurement.WorksAtTwoSchools) keys = keys.Concat(new[] { "procurement.secondSchool" });
                 return AllFieldsComplete(keys);
             }
-            return CurrentRoute() != null && documentChecks.Any(x => x.Checked);
+            return false;
         }
 
         private bool AllFieldsComplete(IEnumerable<string> keys)
@@ -598,6 +625,7 @@ namespace Jangmao70
 
         private bool HasValue(string key)
         {
+            if (dateCombos.ContainsKey(key)) return !string.IsNullOrWhiteSpace(ReadDate(key, key + "Custom"));
             return !string.IsNullOrWhiteSpace(Read(key));
         }
 
