@@ -8,14 +8,14 @@
       "relativePath": "1. หนังสือส่งเบิกจ้างเหมา.docx",
       "businessTagCount": 11,
       "businessOccurrenceCount": 19,
-      "sha256": "562ecb4e590a83b43a4cf1dce6e169637220497dcc606aec9b6e26657a064df7"
+      "sha256": "0fd311b71b182a2efae48fe82ef59fd37d896cedd76b87c35edbbda28789775f"
     },
     {
       "id": "payroll-3",
       "relativePath": "3. ใบส่งมอบงาน.docx",
       "businessTagCount": 19,
       "businessOccurrenceCount": 36,
-      "sha256": "6b965cc07d135487383274307ebdafc4df57e43fa5e6459895f55265f31593f8"
+      "sha256": "68eb7c0e34b9e61778cda5283ee0994cc286f44b57177fdb04a9478691a2cabc"
     },
     {
       "id": "payroll-4",
@@ -29,14 +29,14 @@
       "relativePath": "5. บันทึกอนุมัติเบิกจ่าย.docx",
       "businessTagCount": 19,
       "businessOccurrenceCount": 29,
-      "sha256": "4c08371a5b8152aa2115a3ce76be8c3a832391010688b0bd4df73f8004c2615a"
+      "sha256": "240c51f96e928edf4dd0361790729238f2181ad222de9d7caa94aeed9de2af18"
     },
     {
       "id": "payroll-8",
       "relativePath": "8. ใบสำคัญรับเงิน.docx",
       "businessTagCount": 13,
       "businessOccurrenceCount": 20,
-      "sha256": "efe4fb489a18968ee1f982e07e933f86f444da9dedcd95953c63e0337164c1eb"
+      "sha256": "2c16864076cb3faaa713cfbebc6357611b3b79930781c0f3d4d5a5955b4010f4"
     }
   ]
 }
