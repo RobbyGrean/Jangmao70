@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 
@@ -38,8 +39,8 @@ namespace Jangmao70Uninstaller
                 DeleteOwnedShortcut(Path.Combine(startMenuDir, "Uninstall Jangmao70.lnk"), uninstallExe);
                 DeleteDirectoryIfEmpty(startMenuDir);
 
-                Directory.Delete(installDir, true);
                 MessageBox.Show("ถอนการติดตั้ง Jangmao70 สำเร็จ", "Jangmao70");
+                ScheduleSelfDelete(installDir);
             }
             catch (Exception ex)
             {
@@ -78,6 +79,22 @@ namespace Jangmao70Uninstaller
         private static void DeleteDirectoryIfEmpty(string path)
         {
             if (Directory.Exists(path) && Directory.GetFileSystemEntries(path).Length == 0) Directory.Delete(path);
+        }
+
+        private static void ScheduleSelfDelete(string installDir)
+        {
+            var comSpec = Environment.GetEnvironmentVariable("ComSpec");
+            if (string.IsNullOrWhiteSpace(comSpec)) throw new InvalidOperationException("ไม่พบ cmd.exe สำหรับลบไฟล์หลังปิดตัวถอนการติดตั้ง");
+
+            var command = "/c ping 127.0.0.1 -n 3 > nul & rmdir /s /q \"" + installDir + "\"";
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = comSpec,
+                Arguments = command,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden
+            });
         }
     }
 }

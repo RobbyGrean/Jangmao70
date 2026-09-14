@@ -9,6 +9,13 @@ $payloadTemplate = Join-Path $payload 'Template'
 $csc = 'C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe'
 if (-not (Test-Path -LiteralPath $csc)) { $csc = 'C:\Windows\Microsoft.NET\Framework\v4.0.30319\csc.exe' }
 
+function Require-BuiltFile([string]$path, [string]$label) {
+    if (-not (Test-Path -LiteralPath $path -PathType Leaf)) { throw "$label is missing: $path" }
+    $item = Get-Item -LiteralPath $path
+    if ($item.Length -le 0) { throw "$label is empty: $path" }
+    return $item
+}
+
 & (Join-Path $root 'verify-manifest.ps1')
 & (Join-Path $root 'build-exe-Jangmao70.ps1')
 if (-not (Test-Path -LiteralPath (Join-Path $dist 'Jangmao70.exe'))) { throw 'Built executable is missing' }
@@ -26,12 +33,22 @@ Copy-Item -LiteralPath (Join-Path $dist 'app_database.json') -Destination $paylo
 Copy-Item -Path (Join-Path $dist 'Config\*') -Destination $payloadConfig -Recurse -Force
 Copy-Item -Path (Join-Path $dist 'Template\*') -Destination $payloadTemplate -Recurse -Force
 
-& $csc /codepage:65001 /target:winexe /platform:anycpu /win32icon:"$root\app-icon.ico" /out:"$payload\Uninstall Jangmao70.exe" /reference:System.Windows.Forms.dll /reference:Microsoft.CSharp.dll "$root\Jangmao70Uninstaller.cs"
+$uninstallerPath = Join-Path $payload 'Uninstall Jangmao70.exe'
+& $csc /codepage:65001 /target:winexe /platform:anycpu /win32icon:"$root\app-icon.ico" /out:"$uninstallerPath" /reference:System.Windows.Forms.dll /reference:Microsoft.CSharp.dll "$root\Jangmao70Uninstaller.cs"
 if ($LASTEXITCODE -ne 0) { throw "Uninstaller compile failed with exit code $LASTEXITCODE" }
-& $csc /codepage:65001 /target:winexe /platform:anycpu /win32icon:"$root\app-icon.ico" /out:"$release\Jangmao70-Setup.exe" /reference:System.Windows.Forms.dll /reference:Microsoft.CSharp.dll "$root\Jangmao70Installer.cs"
+$uninstallerArtifact = Require-BuiltFile $uninstallerPath 'Uninstaller build output'
+
+$setupPath = Join-Path $release 'Jangmao70-Setup.exe'
+& $csc /codepage:65001 /target:winexe /platform:anycpu /win32icon:"$root\app-icon.ico" /out:"$setupPath" /reference:System.Windows.Forms.dll /reference:Microsoft.CSharp.dll "$root\Jangmao70Installer.cs"
 if ($LASTEXITCODE -ne 0) { throw "Installer compile failed with exit code $LASTEXITCODE" }
+$setupArtifact = Require-BuiltFile $setupPath 'Installer build output'
 
 $zip = Join-Path $root 'release\Jangmao70-Installer.zip'
+$publishedZip = Join-Path $root 'assets\downloads\Jangmao70-Installer.zip'
 if (Test-Path -LiteralPath $zip) { Remove-Item -LiteralPath $zip -Force }
 Compress-Archive -Path (Join-Path $release '*') -DestinationPath $zip -Force
+Copy-Item -LiteralPath $zip -Destination $publishedZip -Force
+Write-Host "Uninstaller built: $($uninstallerArtifact.FullName) ($($uninstallerArtifact.Length) bytes)"
+Write-Host "Setup built: $($setupArtifact.FullName) ($($setupArtifact.Length) bytes)"
 Write-Host "Installer built: $zip"
+Write-Host "Published installer: $publishedZip"
