@@ -1,0 +1,252 @@
+{
+  "schemaVersion": 1,
+  "module": "Procurement",
+  "root": "Template/Procurement",
+  "centralDocuments": [
+    {
+      "id": "1.ขอจ้างต่อเนื่อง 630",
+      "relativePath": "1.ขอจ้างต่อเนื่อง 630.docx",
+      "businessTagCount": 0,
+      "businessOccurrenceCount": 0,
+      "sha256": "017159b0505f4ef1a2ba9f1c7ce9c414829d1ff6ca012b0ac991da06507dff30"
+    },
+    {
+      "id": "2.1 ขอตั้งกกTOR",
+      "relativePath": "2.1 ขอตั้งกกTOR.docx",
+      "businessTagCount": 0,
+      "businessOccurrenceCount": 0,
+      "sha256": "e0f02c994da51148275bb6ba96a2438652b25ccabb7b549bf8c05d8447766808"
+    },
+    {
+      "id": "2.2 คำสั่งTOR",
+      "relativePath": "2.2 คำสั่งTOR.docx",
+      "businessTagCount": 0,
+      "businessOccurrenceCount": 0,
+      "sha256": "3849133151009095acfca2ecfae45c7fda289cab1e5daf27e9222b019a7e9bbd"
+    },
+    {
+      "id": "4.รายงานผล TOR",
+      "relativePath": "4.รายงานผล TOR.docx",
+      "businessTagCount": 0,
+      "businessOccurrenceCount": 0,
+      "sha256": "86f903af3cb2d5d4cf646b0f335bfa87a03b3a419f8ac272c5ec44b761d96cf4"
+    },
+    {
+      "id": "5. รายงานขอจ้าง",
+      "relativePath": "5. รายงานขอจ้าง.docx",
+      "businessTagCount": 0,
+      "businessOccurrenceCount": 0,
+      "sha256": "ae15fef3d4320493a2476127e2ffb0bd8292bd160bd30e333b0c3ffeacd790f1"
+    },
+    {
+      "id": "6. ใบเสนอราคา",
+      "relativePath": "6. ใบเสนอราคา.docx",
+      "businessTagCount": 0,
+      "businessOccurrenceCount": 0,
+      "sha256": "b81496671b1596b06a61aeb45943a3a35b770563053bfc39c052899ff6590b31"
+    },
+    {
+      "id": "7. รายงานผลพิจารณา",
+      "relativePath": "7. รายงานผลพิจารณา.docx",
+      "businessTagCount": 0,
+      "businessOccurrenceCount": 0,
+      "sha256": "b290b612fe10889be764245b7b4a8ff9badf1262aadfe220afbfcfbdf99a6771"
+    },
+    {
+      "id": "8. ประกาศผู้ชนะ",
+      "relativePath": "8. ประกาศผู้ชนะ.docx",
+      "businessTagCount": 0,
+      "businessOccurrenceCount": 0,
+      "sha256": "2d15b05f8727f11bda875adda7dbf0fd1a6f217e83eea464efde84d6f1b2c640"
+    },
+    {
+      "id": "9. ใบสั่งจ้าง",
+      "relativePath": "9. ใบสั่งจ้าง.docx",
+      "businessTagCount": 0,
+      "businessOccurrenceCount": 0,
+      "sha256": "e3c64e0e1d44f8c5c081cb3046aea394bf47d50fc3a6cba1154726f7feaa0f8c"
+    }
+  ],
+  "routes": [
+    {
+      "id": "route-p01",
+      "positionId": "p01",
+      "hasTeaching": false,
+      "worksAtTwoSchools": false,
+      "tor": "3.TOR/3.1 TOR เจ้าหน้าที่ ICT.docx",
+      "quote": "6.1 แนบท้ายใบเสนอราคา/6.1.1 เจ้าหน้าที่ ICT.docx",
+      "torSha256": "0f90400cfd82ea0793b891e7971cb344306be1281199c81ed7c62945ac2ed975",
+      "quoteSha256": "9bf0f6a3f6742ab45a902e3ddeca92feb4718df35f4d670369f9b63dd50e3a42"
+    },
+    {
+      "id": "route-p02",
+      "positionId": "p02",
+      "hasTeaching": false,
+      "worksAtTwoSchools": false,
+      "tor": "3.TOR/3.2 TOR ธุรการกลุ่มพัฒนาครูฯ.docx",
+      "quote": "6.1 แนบท้ายใบเสนอราคา/6.1.2 ธุรการกลุ่มพัฒนาครูฯ.docx",
+      "torSha256": "d2b81e2027418b5a1f4576db8aa4a58ea49d088e3e06d68d90ef09363d8b3d84",
+      "quoteSha256": "3377ccb386a3b6496a4d553cfadf6f305b34dc136c5472a2910bed13f8064dda"
+    },
+    {
+      "id": "route-p03",
+      "positionId": "p03",
+      "hasTeaching": false,
+      "worksAtTwoSchools": false,
+      "tor": "3.TOR/3.3 TOR ธุรการกลุ่มกฎหมายและคดี.docx",
+      "quote": "6.1 แนบท้ายใบเสนอราคา/6.1.3 ธุรการกลุ่มกฎหมายและคดี.docx",
+      "torSha256": "80cb47ec86d75bad02b884d1a43152295d4e2268d000978791742de2ab8fdc5e",
+      "quoteSha256": "77cd169083b23a018adfa0761a681ed72ecca9ba250e6ccc65603fe245f3e3ca"
+    },
+    {
+      "id": "route-p04",
+      "positionId": "p04",
+      "hasTeaching": false,
+      "worksAtTwoSchools": false,
+      "tor": "3.TOR/3.4 TOR ธุรการกลุ่มนโยบายและแผน.docx",
+      "quote": "6.1 แนบท้ายใบเสนอราคา/6.1.4 ธุรการกลุ่มนโยบายและแผน.docx",
+      "torSha256": "40fc725e10b29d79cfb020ae97717db16842dee3b84198a5d842d29439cc89b6",
+      "quoteSha256": "97ab5dabb58da79da5037e5ccc0732ff89da614da9efdc41567356731f30471f"
+    },
+    {
+      "id": "route-p05",
+      "positionId": "p05",
+      "hasTeaching": false,
+      "worksAtTwoSchools": false,
+      "tor": "3.TOR/3.5 TOR เจ้าหน้าที่ห้องสมุดเคลื่อนที่.docx",
+      "quote": "6.1 แนบท้ายใบเสนอราคา/6.1.5 เจ้าหน้าที่ห้องสมุดเคลื่อนที่.docx",
+      "torSha256": "92d8615729e79879cbd71e20b5d6cc112c0bfb8f668dd34f4df308ab7c50356c",
+      "quoteSha256": "ea0deb60812c5aed562d26570ee683f27969a638e9fd55767ddbe08fad102fc0"
+    },
+    {
+      "id": "route-p06",
+      "positionId": "p06",
+      "hasTeaching": false,
+      "worksAtTwoSchools": false,
+      "tor": "3.TOR/3.6 TOR พนักงานขับรถห้องสมุดเคลื่อนที่.docx",
+      "quote": "6.1 แนบท้ายใบเสนอราคา/6.1.6 พนักงานขับรถห้องสมุดเคลื่อนที่.docx",
+      "torSha256": "7b1b5450097157da1796741c2d6a59b98ec8ce8d5df25230bfec4a3dfb89693f",
+      "quoteSha256": "dff9501ef4daaf7735dd989109150d3eb3a2c413e1e558937ffefe44de514309"
+    },
+    {
+      "id": "route-p07",
+      "positionId": "p07",
+      "hasTeaching": false,
+      "worksAtTwoSchools": false,
+      "tor": "3.TOR/3.7 TOR ธุรการบริหารงานบุคคล.docx",
+      "quote": "6.1 แนบท้ายใบเสนอราคา/6.1.7 ธุรการบริหารงานบุคคล.docx",
+      "torSha256": "b1dfd7e879fd7de66a539ef661f4db291b68fbdea59051dfb2b559cda64c1af2",
+      "quoteSha256": "acbaebe0eb463b013a630ca3957f3e2423f13509b342b7e53a6dab713ffd0c49"
+    },
+    {
+      "id": "route-p08",
+      "positionId": "p08",
+      "hasTeaching": false,
+      "worksAtTwoSchools": false,
+      "tor": "3.TOR/3.8 TOR ธุรการงานพัสดุ.docx",
+      "quote": "6.1 แนบท้ายใบเสนอราคา/6.1.8 ธุรการงานพัสดุ.docx",
+      "torSha256": "a8d0d30f9b09012e8f41b5921440b3fbdcb5cddb8f398a84021a075f9a039c98",
+      "quoteSha256": "02bd58432e2039fb9039359a910dcb1dff8fe069d184c35813e881f27698adf8"
+    },
+    {
+      "id": "route-p09",
+      "positionId": "p09",
+      "hasTeaching": false,
+      "worksAtTwoSchools": false,
+      "tor": "3.TOR/3.9 TOR ธุรการด้านการเงิน-เงินยืมเงินนอก.docx",
+      "quote": "6.1 แนบท้ายใบเสนอราคา/6.1.9 ธุรการงานการเงิน-เงินยืมเงินนอก.docx",
+      "torSha256": "bb8853668e52bb8cfab217669847a583a25c8190e4c79553af2459fb97eb2bf2",
+      "quoteSha256": "8a5f1582e90d35acd698fcc22cfb62ee2aab861d3f301fbf1646052726f883eb"
+    },
+    {
+      "id": "route-p10",
+      "positionId": "p10",
+      "hasTeaching": false,
+      "worksAtTwoSchools": false,
+      "tor": "3.TOR/3.10 TOR ธุรการงานการเงิน-กลาง.docx",
+      "quote": "6.1 แนบท้ายใบเสนอราคา/6.1.10 ธุรการงานการเงิน-กลาง.docx",
+      "torSha256": "4bc4d8020687c3a6a4471bc646643b9fdc4affea4fbf63511ead67a6ce98f588",
+      "quoteSha256": "47d2f3561fdc0c7fc85ed19ce1bffe2df30e3e727fa52abd81e5cf5b98b6836c"
+    },
+    {
+      "id": "route-p11",
+      "positionId": "p11",
+      "hasTeaching": false,
+      "worksAtTwoSchools": false,
+      "tor": "3.TOR/3.11 TOR ธุรการหน่วยตรวจสอบภายใน.docx",
+      "quote": "6.1 แนบท้ายใบเสนอราคา/6.1.11 ธุรการหน่วยตรวจสอบภายใน.docx",
+      "torSha256": "c026b8f0f63d147788c8374dcbf233df51afc2ab84f7af7c4dd9981738c3e792",
+      "quoteSha256": "deadd6295508438c4bbb3e1d181bd419b4b914e5ab20c8b9d17b10e35a85b271"
+    },
+    {
+      "id": "route-p12",
+      "positionId": "p12",
+      "hasTeaching": false,
+      "worksAtTwoSchools": false,
+      "tor": "3.TOR/3.12 TOR ธุรการอำนวยการกลาง.docx",
+      "quote": "6.1 แนบท้ายใบเสนอราคา/6.1.12 ธุรการอำนวยการกลาง.docx",
+      "torSha256": "d4a00fa05c0bccf68627173fc6051f6e23a1d46c4afd013b861c5e139b7c54f6",
+      "quoteSha256": "b28b50ec0a4dec2eda758541e0aaee28a97d96dedbc2d33572cfbe4ca253caa5"
+    },
+    {
+      "id": "route-p13",
+      "positionId": "p13",
+      "hasTeaching": false,
+      "worksAtTwoSchools": false,
+      "tor": "3.TOR/3.13 TOR ธุรการ-ประชุม-ฟลีทการ์ด-ไฟฟ้า.docx",
+      "quote": "6.1 แนบท้ายใบเสนอราคา/6.1.13 ธุรการ-ประชุม-ฟลีทการ์ด-ไฟฟ้า.docx",
+      "torSha256": "0707ebb257d056a858db0767fd14d62aaeabff871894d8f622b1caa6c8d79e10",
+      "quoteSha256": "4a795d83ff938c9020dba33165090eb5565387b39d9d46cc2febe87b64cfbbef"
+    },
+    {
+      "id": "route-p14",
+      "positionId": "p14",
+      "hasTeaching": false,
+      "worksAtTwoSchools": false,
+      "tor": "3.TOR/3.14 TOR ธุรการอำนวยการ-หน้าห้องผู้บริหาร.docx",
+      "quote": "6.1 แนบท้ายใบเสนอราคา/6.1.14 ธุรการอำนวยการ-หน้าห้องผู้บริหาร.docx",
+      "torSha256": "aec8fe0d5b0b17771681400afcb04338ab86af61e93f2b402df2fd996cb4385a",
+      "quoteSha256": "59bfd5db41f90678e6adbd47a5bbedca9a681e6fd1dcb6aaaeb46b93d2e22b74"
+    },
+    {
+      "id": "route-p15",
+      "positionId": "p15",
+      "hasTeaching": false,
+      "worksAtTwoSchools": false,
+      "tor": "3.TOR/3.15 TOR พนักงานขับรถ.docx",
+      "quote": "6.1 แนบท้ายใบเสนอราคา/6.1.15 พนักงานขับรถ.docx",
+      "torSha256": "130f8bfe3faf89b00be81ded8b2bff3a2e746722fab6dd5614557514192ecc9e",
+      "quoteSha256": "4057303e4c8aa55ab3a439cc4252223ade3976ef27d253de326e8a1d094ccd97"
+    },
+    {
+      "id": "route-p16",
+      "positionId": "p16",
+      "hasTeaching": false,
+      "worksAtTwoSchools": false,
+      "tor": "3.TOR/3.16 TOR พนักงานพิมพ์ดีด.docx",
+      "quote": "6.1 แนบท้ายใบเสนอราคา/6.1.16 พนักงานพิมพ์ดีด.docx",
+      "torSha256": "862bb1552595c9df8cd50e5d57788f18494d1aae31e388e7775ecf9b14dc7de5",
+      "quoteSha256": "07479f140da5cc2497c4b44a6ca5f23f7258ebc944bdadf3fc484c7bf705da32"
+    },
+    {
+      "id": "route-p17",
+      "positionId": "p17",
+      "hasTeaching": false,
+      "worksAtTwoSchools": false,
+      "tor": "3.TOR/3.17 TOR พนักงานทำความสะอาด.docx",
+      "quote": "6.1 แนบท้ายใบเสนอราคา/6.1.17 พนักงานทำความสะอาด.docx",
+      "torSha256": "7968c82f5136f6c1f732ae81f53bba45a924ab990d6f6ed75b21b95bdf6f324b",
+      "quoteSha256": "a9cb1305ce5a75f495b68526af9ac0947577f199861e99a19bba5cb29acc61b0"
+    },
+    {
+      "id": "route-p18",
+      "positionId": "p18",
+      "hasTeaching": false,
+      "worksAtTwoSchools": false,
+      "tor": "3.TOR/3.18 TOR พนักงานรักษาความปลอดภัย.docx",
+      "quote": "6.1 แนบท้ายใบเสนอราคา/6.1.18 พนักงานรักษาความปลอดภัย.docx",
+      "torSha256": "a16800369fabcc27f93357d783aee45ea0776834ad38daf57a0d68148e854cc0",
+      "quoteSha256": "dbe6a98c7bd2c1c5c8edcd2fa8639a05284d9a3ad1a558fc226a7914579c583b"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+dist/
+release/
+*.user
+*.suo
+bin/
+obj/

@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "rates": [
+    {
+      "salary": "9,000",
+      "salaryText": "เก้าพันบาทถ้วน",
+      "totalSalary": "108,000",
+      "totalSalaryText": "หนึ่งแสนแปดพันบาทถ้วน",
+      "dutyTax": "108"
+    },
+    {
+      "salary": "15,000",
+      "salaryText": "หนึ่งหมื่นห้าพันบาทถ้วน",
+      "totalSalary": "180,000",
+      "totalSalaryText": "หนึ่งแสนแปดหมื่นบาทถ้วน",
+      "dutyTax": "180"
+    },
+    {
+      "salary": "18,000",
+      "salaryText": "หนึ่งหมื่นแปดพันบาทถ้วน",
+      "totalSalary": "216,000",
+      "totalSalaryText": "สองแสนหนึ่งหมื่นหกพันบาทถ้วน",
+      "dutyTax": "216"
+    }
+  ]
+}

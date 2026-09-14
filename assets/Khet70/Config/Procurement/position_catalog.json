@@ -1,0 +1,133 @@
+{
+  "schemaVersion": 1,
+  "module": "Procurement",
+  "status": "ready-real-khet70-data",
+  "positions": [
+    {
+      "id": "p01",
+      "dropdownLabel": "เจ้าหน้าที่ ICT",
+      "label": "เจ้าหน้าที่ ICT",
+      "teachingFlag": false,
+      "twoSchoolsFlag": false
+    },
+    {
+      "id": "p02",
+      "dropdownLabel": "ธุรการกลุ่มพัฒนาครูฯ",
+      "label": "เจ้าหน้าที่ธุรการงานพัฒนาครูและบุคลากรทางการศึกษา",
+      "teachingFlag": false,
+      "twoSchoolsFlag": false
+    },
+    {
+      "id": "p03",
+      "dropdownLabel": "ธุรการกลุ่มกฎหมายและคดี",
+      "label": "เจ้าหน้าที่ธุรการงานกฎหมายและคดี",
+      "teachingFlag": false,
+      "twoSchoolsFlag": false
+    },
+    {
+      "id": "p04",
+      "dropdownLabel": "ธุรการกลุ่มนโยบายและแผน",
+      "label": "เจ้าหน้าที่ธุรการงานวิเคราะห์นโยบายและแผน",
+      "teachingFlag": false,
+      "twoSchoolsFlag": false
+    },
+    {
+      "id": "p05",
+      "dropdownLabel": "เจ้าหน้าที่ห้องสมุดเคลื่อนที่",
+      "label": "เจ้าหน้าที่ห้องสมุดเคลื่อนที่",
+      "teachingFlag": false,
+      "twoSchoolsFlag": false
+    },
+    {
+      "id": "p06",
+      "dropdownLabel": "พนักงานขับรถห้องสมุดเคลื่อนที่",
+      "label": "พนักงานขับรถห้องสมุดเคลื่อนที่",
+      "teachingFlag": false,
+      "twoSchoolsFlag": false
+    },
+    {
+      "id": "p07",
+      "dropdownLabel": "ธุรการบริหารงานบุคคล",
+      "label": "เจ้าหน้าที่ธุรการงานบุคคล",
+      "teachingFlag": false,
+      "twoSchoolsFlag": false
+    },
+    {
+      "id": "p08",
+      "dropdownLabel": "ธุรการงานพัสดุ",
+      "label": "เจ้าหน้าที่ธุรการงานพัสดุ",
+      "teachingFlag": false,
+      "twoSchoolsFlag": false
+    },
+    {
+      "id": "p09",
+      "dropdownLabel": "ธุรการงานการเงิน-เงินยืมเงินนอก",
+      "label": "เจ้าหน้าที่ธุรการงานการเงิน",
+      "teachingFlag": false,
+      "twoSchoolsFlag": false
+    },
+    {
+      "id": "p10",
+      "dropdownLabel": "ธุรการงานการเงิน-กลาง",
+      "label": "เจ้าหน้าที่ธุรการงานการเงิน",
+      "teachingFlag": false,
+      "twoSchoolsFlag": false
+    },
+    {
+      "id": "p11",
+      "dropdownLabel": "ธุรการหน่วยตรวจสอบภายใน",
+      "label": "เจ้าหน้าที่ธุรการงานตรวจสอบภายใน",
+      "teachingFlag": false,
+      "twoSchoolsFlag": false
+    },
+    {
+      "id": "p12",
+      "dropdownLabel": "ธุรการอำนวยการกลาง",
+      "label": "เจ้าหน้าที่ธุรการอำนวยการ",
+      "teachingFlag": false,
+      "twoSchoolsFlag": false
+    },
+    {
+      "id": "p13",
+      "dropdownLabel": "ธุรการ-ประชุม-ฟลีทการ์ด-ไฟฟ้า",
+      "label": "เจ้าหน้าที่ธุรการอำนวยการ",
+      "teachingFlag": false,
+      "twoSchoolsFlag": false
+    },
+    {
+      "id": "p14",
+      "dropdownLabel": "ธุรการอำนวยการ-หน้าห้องผู้บริหาร",
+      "label": "เจ้าหน้าที่ธุรการอำนวยการ",
+      "teachingFlag": false,
+      "twoSchoolsFlag": false
+    },
+    {
+      "id": "p15",
+      "dropdownLabel": "พนักงานขับรถ",
+      "label": "พนักงานขับรถ",
+      "teachingFlag": false,
+      "twoSchoolsFlag": false
+    },
+    {
+      "id": "p16",
+      "dropdownLabel": "พนักงานพิมพ์ดีด",
+      "label": "พนักงานพิมพ์ดีด",
+      "teachingFlag": false,
+      "twoSchoolsFlag": false
+    },
+    {
+      "id": "p17",
+      "dropdownLabel": "พนักงานทำความสะอาด",
+      "label": "พนักงานทำความสะอาด",
+      "teachingFlag": false,
+      "twoSchoolsFlag": false
+    },
+    {
+      "id": "p18",
+      "dropdownLabel": "พนักงานรักษาความปลอดภัย",
+      "label": "พนักงานรักษาความปลอดภัย",
+      "teachingFlag": false,
+      "twoSchoolsFlag": false
+    }
+  ]
+}
