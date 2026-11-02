@@ -1,0 +1,8 @@
+{
+    "schemaVersion":  1,
+    "product":  "Khet70",
+    "version":  "1.1.1",
+    "installerUrl":  "https://raw.githubusercontent.com/RobbyGrean/Jangmao70/main/assets/Khet70-update-test/Khet70-Setup.exe",
+    "installerSha256":  "A44A3684B5BDA9046FE2B0262310F7F33279402E282F590E3F5E9D68D7383AD0",
+    "payloadSha256":  "0C1D82393E79726D1A61D578D93512A2F49C29B676DFFA05E03B00478A182845"
+}
