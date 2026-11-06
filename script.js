@@ -10,7 +10,7 @@ const SITE_CONFIG = {
   ],
   steps: ['เลือกแท็บงานจัดจ้างหรือเบิกเงินเดือน', 'กรอกข้อมูล หรือกดโหลด Template ที่บันทึกไว้', 'ตรวจข้อมูลและเลือกรายการเอกสารที่ต้องการ', 'ตรวจทานตัวอย่างข้อมูล แล้วยืนยันสร้าง Word', 'เปิดโฟลเดอร์ Output ของงานนั้นและตรวจเอกสาร'],
   screenshot: null, // { src: 'assets/screenshot.png', alt: 'คำอธิบายภาพหน้าจอ' }
-  version: '1.0.7',
+  version: '1.0.8',
   supportedSystems: 'Windows · ใช้งานออฟไลน์',
   releaseDate: null,
   installerUrl: 'assets/downloads/Jangmao70-Installer.zip',

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "version": "1.0.7",
+  "version": "1.0.8",
   "installerUrl": "https://raw.githubusercontent.com/RobbyGrean/Jangmao70/main/assets/downloads/Jangmao70-Setup.exe",
-  "installerSha256": "A1F1E51A93E6BCCEDB723F76CB0D4CC2453568CA12104BF750FD4B2174548929",
+  "installerSha256": "29913E2473140CA859BDFE212FE5DD1F942300DA6081DD70D439AB8C3F71C398",
   "databaseSha256": "13835AB1439DF6BCBC65C42DC2BAE97A55868F0663701C112C1B9CBBCD874961"
 }
